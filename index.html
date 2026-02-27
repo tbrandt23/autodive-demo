@@ -314,84 +314,305 @@
     }
 
     /* ========================================
-       HOW IT WORKS - STEP SLIDER
+       HOW IT WORKS - STORM SIMULATION
     ======================================== */
     .how-it-works-bg {
       background: linear-gradient(170deg, #0F1D35 0%, #1B2A4A 50%, #1e3050 100%);
     }
 
-    .step-slider-nav {
-      display: flex;
-      gap: 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .step-tab {
-      flex: 1;
-      padding: 1.25rem 1rem;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: left;
+    /* --- Water Column --- */
+    .sim-water-col {
       position: relative;
-    }
-    .step-tab::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--color-steel-blue);
-      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .step-tab.active::after {
       width: 100%;
+      height: 420px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #162840 0%, #0d1f36 40%, #091728 100%);
+      border: 1px solid rgba(255,255,255,0.06);
     }
-    .step-tab .step-number {
-      display: block;
+    /* Sky area */
+    .sim-sky {
+      position: absolute; top: 0; left: 0; right: 0; height: 25%;
+      background: linear-gradient(180deg, #1a2e4a 0%, #162840 100%);
+      z-index: 1;
+    }
+    /* Wave surface */
+    .sim-waves {
+      position: absolute; top: 25%; left: 0; right: 0; height: 50px;
+      z-index: 3; overflow: hidden;
+    }
+    .sim-wave-layer {
+      position: absolute; top: 0; left: 0; width: 200%; height: 100%;
+    }
+    .sim-wave-layer svg { width: 50%; height: 100%; display: inline-block; vertical-align: top; }
+    .sim-wave-layer.layer-1 {
+      animation: waveScroll1 4s linear infinite;
+    }
+    .sim-wave-layer.layer-2 {
+      animation: waveScroll2 6s linear infinite;
+      opacity: 0.5; top: 4px;
+    }
+    @keyframes waveScroll1 {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes waveScroll2 {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    /* Depth markers */
+    .sim-depth-markers {
+      position: absolute; top: 25%; left: 8px; bottom: 10px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      z-index: 2; pointer-events: none;
+    }
+    .sim-depth-mark {
       font-family: 'Space Grotesk', monospace;
-      font-size: 0.6875rem;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.25);
-      margin-bottom: 0.25rem;
-      transition: color 0.3s ease;
+      font-size: 9px; color: rgba(255,255,255,0.15);
+      letter-spacing: 0.05em;
     }
-    .step-tab.active .step-number {
-      color: var(--color-steel-blue);
+    /* Cage assembly */
+    .sim-cage-group {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      z-index: 4; width: 140px;
+      transition: top 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: cageBob 3s ease-in-out infinite;
+      --bob-amount: 2px;
     }
-    .step-tab .step-label {
-      display: block;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.4);
-      transition: color 0.3s ease;
+    @keyframes cageBob {
+      0%, 100% { margin-top: 0; }
+      25% { margin-top: calc(var(--bob-amount) * -1); }
+      50% { margin-top: var(--bob-amount); }
+      75% { margin-top: calc(var(--bob-amount) * -0.5); }
     }
-    .step-tab.active .step-label {
-      color: #fff;
+    .sim-cage-bar {
+      width: 100%; height: 4px; border-radius: 2px;
+      background: #5A6E82;
     }
-    .step-tab:hover .step-label {
-      color: rgba(255,255,255,0.7);
+    .sim-cage-line {
+      width: 1px; height: 32px; background: rgba(122,137,153,0.5);
+      margin: 0 auto;
+    }
+    .sim-cage-box {
+      width: 28px; height: 18px; border-radius: 3px;
+      border: 1.5px solid #7A8999; background: rgba(90,110,130,0.15);
+      margin: 0 auto;
+    }
+    .sim-cage-lines {
+      display: flex; justify-content: space-between; padding: 0 12px;
+    }
+    .sim-cage-boxes {
+      display: flex; justify-content: space-between; padding: 0 8px;
+    }
+    /* AutoDive unit on bar */
+    .sim-autodive-unit {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 24px; height: 14px; border-radius: 4px;
+      background: #5A6E82; border: 1px solid #7A8999;
+    }
+    .sim-autodive-led {
+      width: 5px; height: 5px; border-radius: 50%;
+      position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+      transition: background 0.5s ease, box-shadow 0.5s ease;
+    }
+    .sim-autodive-led.on {
+      background: #4ecdc4;
+      box-shadow: 0 0 6px #4ecdc4, 0 0 12px rgba(78,205,196,0.3);
+    }
+    .sim-autodive-led.off {
+      background: #ff6b6b;
+      box-shadow: 0 0 4px rgba(255,107,107,0.4);
+    }
+    /* Storm clouds */
+    .sim-clouds {
+      position: absolute; top: 0; left: 0; right: 0; height: 25%;
+      z-index: 2; pointer-events: none;
+      opacity: 0; transition: opacity 0.8s ease;
+    }
+    /* Rain */
+    .sim-rain {
+      position: absolute; top: 10%; left: 0; right: 0; height: 20%;
+      z-index: 2; pointer-events: none; overflow: hidden;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .sim-raindrop {
+      position: absolute; width: 1px; background: rgba(90,110,130,0.4);
+      animation: simRainFall 0.8s linear infinite;
+    }
+    @keyframes simRainFall {
+      0% { transform: translateY(-100%); opacity: 0.6; }
+      100% { transform: translateY(400%); opacity: 0; }
     }
 
-    .step-panel {
-      display: none !important;
-      opacity: 0;
+    /* --- Slider --- */
+    .sim-slider-track {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 3px;
+      background: linear-gradient(90deg, rgba(78,205,196,0.3) 0%, rgba(255,165,0,0.4) 50%, rgba(255,107,107,0.5) 100%);
+      outline: none; cursor: pointer;
     }
-    .step-panel.active {
-      display: grid !important;
-      animation: stepIn 0.5s ease forwards;
+    .sim-slider-track::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.8);
+      transition: transform 0.15s ease;
     }
-    @keyframes stepIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+    .sim-slider-track::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    .sim-slider-track::-moz-range-thumb {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.8);
+    }
+
+    /* --- Preset buttons --- */
+    .sim-preset {
+      padding: 6px 14px; border-radius: 20px;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px; letter-spacing: 0.04em;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.45);
+      cursor: pointer; transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .sim-preset:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+    }
+    .sim-preset.active {
+      border-color: var(--color-steel-blue);
+      color: #fff; background: rgba(90,110,130,0.2);
+    }
+
+    /* --- Toggle switch --- */
+    .sim-toggle-track {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: rgba(255,107,107,0.3); border: 1px solid rgba(255,107,107,0.4);
+      position: relative; cursor: pointer;
+      transition: all 0.35s ease;
+    }
+    .sim-toggle-track.on {
+      background: rgba(78,205,196,0.25);
+      border-color: rgba(78,205,196,0.5);
+    }
+    .sim-toggle-knob {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #ff6b6b;
+      position: absolute; top: 2px; left: 2px;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .sim-toggle-track.on .sim-toggle-knob {
+      left: 22px; background: #4ecdc4;
+    }
+
+    /* --- Step timeline --- */
+    .sim-step {
+      flex: 1; position: relative; text-align: center;
+      padding: 10px 4px 0; cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .sim-step::before {
+      content: ''; display: block; width: 10px; height: 10px;
+      border-radius: 50%; margin: 0 auto 6px;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.15);
+      transition: all 0.3s ease;
+    }
+    .sim-step.active::before {
+      background: var(--color-steel-blue);
+      border-color: var(--color-steel-blue);
+      box-shadow: 0 0 8px rgba(90,110,130,0.4);
+    }
+    .sim-step-connector {
+      position: absolute; top: 14px; left: 55%; right: -45%;
+      height: 2px; background: rgba(255,255,255,0.08);
+      z-index: 0;
+    }
+    .sim-step:last-child .sim-step-connector { display: none; }
+    .sim-step-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px; color: rgba(255,255,255,0.3);
+      letter-spacing: 0.04em; transition: color 0.3s ease;
+    }
+    .sim-step.active .sim-step-label { color: #fff; }
+
+    /* --- Event log --- */
+    .sim-log {
+      max-height: 150px; overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+    .sim-log::-webkit-scrollbar { width: 4px; }
+    .sim-log::-webkit-scrollbar-track { background: transparent; }
+    .sim-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .sim-log-entry {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px; color: rgba(255,255,255,0.35);
+      padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+      animation: logFadeIn 0.3s ease;
+    }
+    .sim-log-entry.alert { color: rgba(255,165,0,0.7); }
+    .sim-log-entry.danger { color: rgba(255,107,107,0.7); }
+    .sim-log-entry.safe { color: rgba(78,205,196,0.7); }
+    @keyframes logFadeIn {
+      from { opacity: 0; transform: translateX(-6px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* --- Metrics strip --- */
+    .sim-metric-value {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 18px; font-weight: 700;
+      transition: color 0.4s ease;
+    }
+    .sim-metric-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.3); text-transform: uppercase;
+    }
+
+    /* --- Status badge --- */
+    .sim-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 0.4s ease;
+    }
+    .sim-status.protected {
+      background: rgba(78,205,196,0.1); border: 1px solid rgba(78,205,196,0.25);
+      color: #4ecdc4;
+    }
+    .sim-status.warning {
+      background: rgba(255,165,0,0.1); border: 1px solid rgba(255,165,0,0.25);
+      color: #ffa500;
+    }
+    .sim-status.danger {
+      background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.25);
+      color: #ff6b6b;
+    }
+    .sim-status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      animation: simPulse 1.5s ease infinite;
+    }
+    .sim-status.protected .sim-status-dot { background: #4ecdc4; }
+    .sim-status.warning .sim-status-dot { background: #ffa500; }
+    .sim-status.danger .sim-status-dot { background: #ff6b6b; }
+    @keyframes simPulse {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
     }
 
     @media (max-width: 768px) {
-      .step-slider-nav { flex-wrap: wrap; }
-      .step-tab { flex: 1 1 45%; }
+      .sim-water-col { height: 320px; }
+      .sim-cage-group { width: 100px; }
+      .sim-cage-box { width: 22px; height: 14px; }
+      .sim-cage-line { height: 24px; }
     }
 
     /* ========================================
@@ -1021,233 +1242,172 @@
       <div class="max-w-[1340px] mx-auto px-6">
         <!-- Header -->
         <div class="section-label mb-6 tech-reveal" style="color: var(--color-silver-gray);">03 / HOW IT WORKS</div>
-        <div class="grid lg:grid-cols-12 gap-8 mb-16">
-          <div class="lg:col-span-7 tech-reveal">
-            <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight">
-              From Storm Warning to<br><span class="accent" style="color: var(--color-steel-blue);">Protected Harvest</span>
-            </h2>
-          </div>
-          <div class="lg:col-span-4 lg:col-start-9 flex items-end tech-reveal">
-            <p class="text-base leading-relaxed" style="color: rgba(255,255,255,0.55);">
-              AutoDive responds to real ocean conditions in real time — no crew, no boats, no manual intervention.
-            </p>
-          </div>
+        <div class="mb-4 tech-reveal">
+          <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight mb-3">
+            Try a storm scenario<br><span class="accent" style="color: var(--color-steel-blue);">in 30 seconds.</span>
+          </h2>
+          <p class="text-base leading-relaxed max-w-xl" style="color: rgba(255,255,255,0.45);">
+            Crank up the storm and watch AutoDive protect your crops.
+          </p>
         </div>
 
-        <!-- Step Tab Navigation -->
-        <div class="step-slider-nav tech-reveal">
-          <button class="step-tab active" data-step="0" onclick="switchStep(0)">
-            <span class="step-number">01</span>
-            <span class="step-label">Storm Incoming</span>
-          </button>
-          <button class="step-tab" data-step="1" onclick="switchStep(1)">
-            <span class="step-number">02</span>
-            <span class="step-label">System Detects</span>
-          </button>
-          <button class="step-tab" data-step="2" onclick="switchStep(2)">
-            <span class="step-number">03</span>
-            <span class="step-label">Cages Submerge</span>
-          </button>
-          <button class="step-tab" data-step="3" onclick="switchStep(3)">
-            <span class="step-number">04</span>
-            <span class="step-label">Crops Protected</span>
-          </button>
-        </div>
+        <!-- ===== STORM SIMULATION ===== -->
+        <div id="storm-sim" class="tech-reveal">
+          <div class="grid lg:grid-cols-12 gap-6 lg:gap-8">
 
-        <!-- Step Content Panels -->
-        <div class="mt-12" id="step-panels">
-          <!-- Step 0: Storm Incoming -->
-          <div class="step-panel active grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="0">
-            <div class="lg:col-span-5">
-              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
-                A storm rolls in off the coast
-              </h3>
-              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
-                A nor'easter, hurricane, or heavy wave event is bearing down. Traditionally, farmers scramble boats to manually lower gear before it hits — or risk losing the entire crop.
-              </p>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
-                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Weather alert triggered</span>
-              </div>
-            </div>
+            <!-- LEFT: Water Column Visualization -->
             <div class="lg:col-span-7">
-              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
-                <defs>
-                  <linearGradient id="sw1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
-                </defs>
-                <rect x="0" y="80" width="700" height="220" fill="url(#sw1)" rx="4"/>
+              <div class="sim-water-col" id="sim-canvas">
+                <!-- Sky -->
+                <div class="sim-sky"></div>
                 <!-- Storm clouds -->
-                <ellipse cx="200" cy="30" rx="100" ry="25" fill="#1e3050" opacity="0.8"/>
-                <ellipse cx="300" cy="22" rx="80" ry="22" fill="#243556" opacity="0.7"/>
-                <ellipse cx="150" cy="38" rx="60" ry="18" fill="#1e3050" opacity="0.6"/>
-                <!-- Rain lines -->
-                <line x1="160" y1="55" x2="155" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.4"/>
-                <line x1="200" y1="50" x2="195" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.3"/>
-                <line x1="240" y1="48" x2="235" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.4"/>
-                <line x1="280" y1="52" x2="275" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.3"/>
-                <!-- Rough waves -->
-                <path d="M0,80 Q35,60 70,80 T140,78 T210,82 T280,76 T350,83 T420,77 T490,82 T560,78 T630,83 T700,78" stroke="#5A6E82" stroke-width="2" fill="none" opacity="0.7"/>
-                <!-- Farm at surface - vulnerable -->
-                <rect x="350" y="85" width="200" height="6" fill="#5A6E82" rx="2"/>
-                <line x1="380" y1="91" x2="380" y2="160" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="450" y1="91" x2="450" y2="160" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="520" y1="91" x2="520" y2="160" stroke="#7A8999" stroke-width="1.5"/>
-                <rect x="365" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="435" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="505" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <!-- Warning text -->
-                <text x="80" y="130" fill="#8A96A6" font-family="Space Grotesk" font-size="10" letter-spacing="0.06em">WAVE HT: 2.4m</text>
-                <text x="80" y="145" fill="#8A96A6" font-family="Space Grotesk" font-size="10" letter-spacing="0.06em">WIND: 35 kts</text>
-                <polygon points="60,122 68,136 52,136" fill="none" stroke="#8A96A6" stroke-width="1.5"/>
-                <text x="60" y="133" fill="#8A96A6" font-family="Inter" font-size="8" text-anchor="middle">!</text>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Step 1: System Detects -->
-          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="1">
-            <div class="lg:col-span-5">
-              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
-                Sensors read the conditions
-              </h3>
-              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
-                AutoDive's onboard sensors pick up wave height, temperature, and current data. The system cross-references NOAA forecasts and determines the safest depth for your crop — all without human input.
-              </p>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
-                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Processing environmental data</span>
-              </div>
-            </div>
-            <div class="lg:col-span-7">
-              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
-                <defs>
-                  <linearGradient id="sw2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
-                </defs>
-                <rect x="0" y="70" width="700" height="230" fill="url(#sw2)" rx="4"/>
-                <path d="M0,70 Q40,58 80,70 T160,68 T240,72 T320,67 T400,73 T480,68 T560,72 T640,69 T700,72" stroke="#5A6E82" stroke-width="1.5" fill="none" opacity="0.6"/>
-                <!-- AutoDive engine on structure -->
-                <rect x="300" y="90" width="200" height="6" fill="#5A6E82" rx="2"/>
-                <rect x="385" y="76" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
-                <!-- Pulsing sensor nodes -->
-                <circle cx="330" cy="93" r="4" fill="#8A96A6"><animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/></circle>
-                <circle cx="470" cy="93" r="4" fill="#8A96A6"><animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" begin="0.5s"/></circle>
-                <!-- Data flowing to dashboard -->
-                <line x1="400" y1="78" x2="580" y2="45" stroke="#7A8999" stroke-width="1" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/></line>
-                <!-- Dashboard panel -->
-                <rect x="540" y="30" width="140" height="95" fill="rgba(27,42,74,0.7)" rx="3" stroke="#5A6E82" stroke-width="1"/>
-                <text x="555" y="50" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">WAVE HEIGHT</text>
-                <text x="555" y="64" fill="#B0B8C4" font-family="Space Grotesk" font-size="13" font-weight="600">2.4m</text>
-                <text x="555" y="82" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">RECOMMENDED</text>
-                <text x="555" y="96" fill="#B0B8C4" font-family="Space Grotesk" font-size="13" font-weight="600">SUBMERGE 4.2m</text>
-                <text x="555" y="116" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">STATUS</text>
-                <circle cx="555" cy="114" r="2" fill="#8A96A6"><animate attributeName="fill" values="#5A6E82;#B0B8C4;#5A6E82" dur="1s" repeatCount="indefinite"/></circle>
-                <!-- Lines and cages below -->
-                <line x1="330" y1="96" x2="330" y2="170" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="400" y1="96" x2="400" y2="170" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="470" y1="96" x2="470" y2="170" stroke="#7A8999" stroke-width="1.5"/>
-                <rect x="315" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="385" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="455" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Step 2: Cages Submerge -->
-          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="2">
-            <div class="lg:col-span-5">
-              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
-                Cages drop to safe depth
-              </h3>
-              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
-                The Depth Control Engine adjusts buoyancy and lowers your cages below the wave zone — automatically. No boats. No crew. No scrambling to beat the weather.
-              </p>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
-                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Depth adjustment in progress</span>
-              </div>
-            </div>
-            <div class="lg:col-span-7">
-              <svg viewBox="0 0 700 320" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
-                <defs>
-                  <linearGradient id="sw3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
-                </defs>
-                <rect x="0" y="70" width="700" height="250" fill="url(#sw3)" rx="4"/>
-                <!-- Storm waves above -->
-                <path d="M0,70 Q30,52 60,70 T120,68 T180,73 T240,66 T300,74 T360,67 T420,73 T480,68 T540,74 T600,69 T660,73 T700,68" stroke="#5A6E82" stroke-width="2" fill="none" opacity="0.7"/>
-                <!-- Farm structure - now deep underwater -->
-                <rect x="300" y="175" width="200" height="6" fill="#5A6E82" rx="2"/>
-                <rect x="385" y="162" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
-                <circle cx="400" cy="170" r="4" fill="#8A96A6"><animate attributeName="fill" values="#8A96A6;#B0B8C4;#8A96A6" dur="1s" repeatCount="indefinite"/></circle>
-                <line x1="330" y1="181" x2="330" y2="250" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="400" y1="181" x2="400" y2="250" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="470" y1="181" x2="470" y2="250" stroke="#7A8999" stroke-width="1.5"/>
-                <rect x="315" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="385" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="455" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <!-- Downward arrows -->
-                <line x1="255" y1="100" x2="255" y2="180" stroke="#7A8999" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/></line>
-                <polygon points="251,178 259,178 255,188" fill="#7A8999"/>
-                <text x="210" y="140" fill="#8A96A6" font-family="Space Grotesk" font-size="9" letter-spacing="0.06em">DEPTH</text>
-                <text x="210" y="152" fill="#8A96A6" font-family="Space Grotesk" font-size="9" letter-spacing="0.06em">4.2m</text>
-                <!-- Shore control -->
-                <rect x="585" y="52" width="30" height="18" fill="#5A6E82" rx="2"/>
-                <circle cx="600" cy="49" r="3" fill="#8A96A6"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/></circle>
-                <text x="600" y="82" fill="#8A96A6" font-family="Inter" font-size="8" text-anchor="middle" letter-spacing="0.06em">SHORE</text>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Step 3: Crops Protected -->
-          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="3">
-            <div class="lg:col-span-5">
-              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
-                Storm passes. Crop intact.
-              </h3>
-              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
-                When conditions clear, AutoDive raises cages back to optimal growing depth. Zero product loss. Zero injury risk. You managed the whole event from your kitchen table.
-              </p>
-              <div class="grid grid-cols-2 gap-4 mt-6">
-                <div class="p-4" style="border-left: 2px solid var(--color-steel-blue);">
-                  <p class="font-mono text-2xl font-bold text-white">0</p>
-                  <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Crew deployed</p>
+                <div class="sim-clouds" id="sim-clouds">
+                  <svg viewBox="0 0 400 100" class="w-full h-full" preserveAspectRatio="none">
+                    <ellipse cx="100" cy="40" rx="80" ry="28" fill="#1a2e4a" opacity="0.9"/>
+                    <ellipse cx="200" cy="30" rx="100" ry="32" fill="#162840" opacity="0.85"/>
+                    <ellipse cx="300" cy="45" rx="70" ry="24" fill="#1a2e4a" opacity="0.8"/>
+                    <ellipse cx="160" cy="55" rx="60" ry="20" fill="#0d1f36" opacity="0.7"/>
+                  </svg>
                 </div>
-                <div class="p-4" style="border-left: 2px solid var(--color-steel-blue);">
-                  <p class="font-mono text-2xl font-bold text-white">100%</p>
-                  <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Crop protected</p>
+                <!-- Rain -->
+                <div class="sim-rain" id="sim-rain"></div>
+                <!-- Wave surface — animated layers -->
+                <div class="sim-waves" id="sim-waves-container">
+                  <div class="sim-wave-layer layer-1" id="sim-wave-layer1">
+                    <svg viewBox="0 0 400 50" preserveAspectRatio="none">
+                      <path id="sim-wave-path1a" d="M0,25 Q25,24 50,25 T100,25 T150,25 T200,25 T250,25 T300,25 T350,25 T400,25" fill="#162840" stroke="rgba(90,110,130,0.35)" stroke-width="1.5"/>
+                    </svg><svg viewBox="0 0 400 50" preserveAspectRatio="none">
+                      <path id="sim-wave-path1b" d="M0,25 Q25,24 50,25 T100,25 T150,25 T200,25 T250,25 T300,25 T350,25 T400,25" fill="#162840" stroke="rgba(90,110,130,0.35)" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                  <div class="sim-wave-layer layer-2" id="sim-wave-layer2">
+                    <svg viewBox="0 0 400 50" preserveAspectRatio="none">
+                      <path id="sim-wave-path2a" d="M0,28 Q30,27 60,28 T120,28 T180,28 T240,28 T300,28 T360,28 T400,28" fill="#0d1f36" stroke="rgba(90,110,130,0.2)" stroke-width="1"/>
+                    </svg><svg viewBox="0 0 400 50" preserveAspectRatio="none">
+                      <path id="sim-wave-path2b" d="M0,28 Q30,27 60,28 T120,28 T180,28 T240,28 T300,28 T360,28 T400,28" fill="#0d1f36" stroke="rgba(90,110,130,0.2)" stroke-width="1"/>
+                    </svg>
+                  </div>
+                </div>
+                <!-- Depth markers -->
+                <div class="sim-depth-markers">
+                  <span class="sim-depth-mark">0m</span>
+                  <span class="sim-depth-mark">2m</span>
+                  <span class="sim-depth-mark">4m</span>
+                  <span class="sim-depth-mark">6m</span>
+                  <span class="sim-depth-mark">8m</span>
+                </div>
+                <!-- Cage assembly -->
+                <div class="sim-cage-group" id="sim-cage" style="top: 26%;">
+                  <div style="position:relative;">
+                    <div class="sim-cage-bar"></div>
+                    <div class="sim-autodive-unit">
+                      <div class="sim-autodive-led on" id="sim-led"></div>
+                    </div>
+                  </div>
+                  <div class="sim-cage-lines">
+                    <div class="sim-cage-line"></div>
+                    <div class="sim-cage-line"></div>
+                    <div class="sim-cage-line"></div>
+                  </div>
+                  <div class="sim-cage-boxes">
+                    <div class="sim-cage-box"></div>
+                    <div class="sim-cage-box"></div>
+                    <div class="sim-cage-box"></div>
+                  </div>
+                </div>
+                <!-- Data overlay -->
+                <div class="absolute top-3 right-3 z-10" style="background: rgba(13,31,54,0.75); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 10px 14px;">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span id="sim-status-badge" class="sim-status protected"><span class="sim-status-dot"></span>Protected</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-x-6 gap-y-1" style="font-family: 'Space Grotesk', monospace;">
+                    <div><span style="font-size:8px; color:rgba(255,255,255,0.3); letter-spacing:0.06em;">WAVE HT</span><br><span id="sim-wave-val" style="font-size:13px; font-weight:600; color:#B0B8C4;">0.3m</span></div>
+                    <div><span style="font-size:8px; color:rgba(255,255,255,0.3); letter-spacing:0.06em;">WIND</span><br><span id="sim-wind-val" style="font-size:13px; font-weight:600; color:#B0B8C4;">5 kts</span></div>
+                    <div><span style="font-size:8px; color:rgba(255,255,255,0.3); letter-spacing:0.06em;">DEPTH</span><br><span id="sim-depth-val" style="font-size:13px; font-weight:600; color:#B0B8C4;">0.5m</span></div>
+                    <div><span style="font-size:8px; color:rgba(255,255,255,0.3); letter-spacing:0.06em;">RESPONSE</span><br><span id="sim-resp-val" style="font-size:13px; font-weight:600; color:#B0B8C4;">—</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slider + controls under canvas -->
+              <div class="mt-5">
+                <!-- AutoDive toggle + storm slider on same row -->
+                <div class="flex items-center gap-4 lg:gap-6 mb-4">
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <div class="sim-toggle-track on" id="sim-toggle" onclick="toggleAutoDive()">
+                      <div class="sim-toggle-knob"></div>
+                    </div>
+                    <span id="sim-toggle-label" style="font-family: 'Space Grotesk', monospace; font-size: 11px; color: #4ecdc4; letter-spacing: 0.04em;">AutoDive ON</span>
+                  </div>
+                  <div class="flex-1">
+                    <input type="range" min="0" max="100" value="0" class="sim-slider-track" id="sim-slider" oninput="updateStorm(this.value)">
+                  </div>
+                  <div class="flex-shrink-0" style="font-family: 'Space Grotesk', monospace; font-size: 10px; min-width: 52px; text-align: right;">
+                    <span id="sim-intensity-label" style="color: rgba(78,205,196,0.8);">Calm</span>
+                  </div>
+                </div>
+                <!-- Presets -->
+                <div class="flex gap-2 flex-wrap">
+                  <button class="sim-preset active" onclick="setPreset('calm')">Bluebird Day</button>
+                  <button class="sim-preset" onclick="setPreset('moderate')">Nor'easter</button>
+                  <button class="sim-preset" onclick="setPreset('severe')">Hurricane</button>
                 </div>
               </div>
             </div>
-            <div class="lg:col-span-7">
-              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
-                <defs>
-                  <linearGradient id="sw4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
-                </defs>
-                <rect x="0" y="65" width="700" height="235" fill="url(#sw4)" rx="4"/>
-                <!-- Calm sky -->
-                <circle cx="600" cy="25" r="18" fill="#5A6E82" opacity="0.15"/>
-                <!-- Calm water -->
-                <path d="M0,65 Q50,60 100,65 T200,64 T300,66 T400,64 T500,65 T600,64 T700,65" stroke="#5A6E82" stroke-width="1.5" fill="none" opacity="0.4"/>
-                <!-- Farm back at optimal depth -->
-                <rect x="300" y="100" width="200" height="6" fill="#5A6E82" rx="2"/>
-                <rect x="385" y="87" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
-                <circle cx="400" cy="95" r="4" fill="#8A96A6"/>
-                <line x1="330" y1="106" x2="330" y2="180" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="400" y1="106" x2="400" y2="180" stroke="#7A8999" stroke-width="1.5"/>
-                <line x1="470" y1="106" x2="470" y2="180" stroke="#7A8999" stroke-width="1.5"/>
-                <rect x="315" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="385" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <rect x="455" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
-                <!-- Upward arrows - rising back -->
-                <line x1="255" y1="175" x2="255" y2="105" stroke="#7A8999" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="0;14" dur="1s" repeatCount="indefinite"/></line>
-                <polygon points="251,107 259,107 255,97" fill="#7A8999"/>
-                <!-- Status readout -->
-                <rect x="540" y="100" width="140" height="75" fill="rgba(27,42,74,0.6)" rx="3" stroke="#5A6E82" stroke-width="1"/>
-                <text x="555" y="118" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">STATUS</text>
-                <text x="555" y="132" fill="#B0B8C4" font-family="Space Grotesk" font-size="12" font-weight="600">ALL CLEAR</text>
-                <text x="555" y="148" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">CROP LOSS</text>
-                <text x="555" y="162" fill="#B0B8C4" font-family="Space Grotesk" font-size="12" font-weight="600">0%</text>
-              </svg>
+
+            <!-- RIGHT: Event Log + Metrics -->
+            <div class="lg:col-span-5">
+              <!-- Event Log -->
+              <div class="mb-5" style="background: rgba(13,31,54,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 16px;">
+                <div class="flex items-center justify-between mb-3">
+                  <span style="font-family: 'Space Grotesk', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.25); text-transform: uppercase;">Event Log</span>
+                  <span style="font-family: 'Space Grotesk', monospace; font-size: 9px; color: rgba(255,255,255,0.15);">LIVE</span>
+                </div>
+                <div class="sim-log" id="sim-log">
+                  <div class="sim-log-entry safe">17:30 — System online. All sensors nominal.</div>
+                  <div class="sim-log-entry">17:30 — Cage depth: 0.5m. Status: OPTIMAL.</div>
+                </div>
+              </div>
+
+              <!-- Metrics Strip -->
+              <div class="grid grid-cols-3 gap-3 mb-5">
+                <div style="background: rgba(13,31,54,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 12px; text-align: center;">
+                  <div id="sim-metric-risk" class="sim-metric-value" style="color: #4ecdc4;">Low</div>
+                  <div class="sim-metric-label">Damage Risk</div>
+                </div>
+                <div style="background: rgba(13,31,54,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 12px; text-align: center;">
+                  <div id="sim-metric-boats" class="sim-metric-value" style="color: #4ecdc4;">0</div>
+                  <div class="sim-metric-label">Boat Trips</div>
+                </div>
+                <div style="background: rgba(13,31,54,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 12px; text-align: center;">
+                  <div id="sim-metric-crew" class="sim-metric-value" style="color: #4ecdc4;">0</div>
+                  <div class="sim-metric-label">Crew on Water</div>
+                </div>
+              </div>
+
+              <!-- Step Timeline -->
+              <div style="background: rgba(13,31,54,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 16px;">
+                <span style="font-family: 'Space Grotesk', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.25); text-transform: uppercase;">Sequence</span>
+                <div class="flex mt-3" id="sim-timeline">
+                  <div class="sim-step active" onclick="scrubToStep(0)">
+                    <div class="sim-step-connector"></div>
+                    <span class="sim-step-label">Calm</span>
+                  </div>
+                  <div class="sim-step" onclick="scrubToStep(1)">
+                    <div class="sim-step-connector"></div>
+                    <span class="sim-step-label">Detect</span>
+                  </div>
+                  <div class="sim-step" onclick="scrubToStep(2)">
+                    <div class="sim-step-connector"></div>
+                    <span class="sim-step-label">Submerge</span>
+                  </div>
+                  <div class="sim-step" onclick="scrubToStep(3)">
+                    <span class="sim-step-label">Protected</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -1988,15 +2148,259 @@
     // ==========================================
     // STEP SLIDER (How It Works)
     // ==========================================
-    function switchStep(index) {
-      // Update tabs
-      document.querySelectorAll('.step-tab').forEach(tab => {
-        tab.classList.toggle('active', parseInt(tab.dataset.step) === index);
+    // ==========================================
+    // STORM SIMULATION ENGINE
+    // ==========================================
+    const sim = {
+      autodiveOn: true,
+      intensity: 0,       // 0-100
+      currentStep: 0,
+      logTime: 1730,       // military time counter for log entries
+    };
+
+    // Generate rain drops
+    (function initRain() {
+      const rain = document.getElementById('sim-rain');
+      if (!rain) return;
+      for (let i = 0; i < 40; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'sim-raindrop';
+        drop.style.left = (Math.random() * 100) + '%';
+        drop.style.height = (8 + Math.random() * 16) + 'px';
+        drop.style.animationDelay = (Math.random() * 1) + 's';
+        drop.style.animationDuration = (0.5 + Math.random() * 0.4) + 's';
+        rain.appendChild(drop);
+      }
+    })();
+
+    function updateStorm(value) {
+      value = parseInt(value);
+      sim.intensity = value;
+      const pct = value / 100;
+
+      // Update slider position
+      document.getElementById('sim-slider').value = value;
+
+      // --- Intensity label ---
+      const label = document.getElementById('sim-intensity-label');
+      if (pct < 0.25) {
+        label.textContent = 'Calm';
+        label.style.color = 'rgba(78,205,196,0.8)';
+      } else if (pct < 0.55) {
+        label.textContent = 'Moderate';
+        label.style.color = 'rgba(255,165,0,0.8)';
+      } else {
+        label.textContent = 'Severe';
+        label.style.color = 'rgba(255,107,107,0.8)';
+      }
+
+      // --- Update presets highlight ---
+      document.querySelectorAll('.sim-preset').forEach(btn => btn.classList.remove('active'));
+      if (value === 0) document.querySelector('.sim-preset[onclick*="calm"]')?.classList.add('active');
+      else if (value === 50) document.querySelector('.sim-preset[onclick*="moderate"]')?.classList.add('active');
+      else if (value === 100) document.querySelector('.sim-preset[onclick*="severe"]')?.classList.add('active');
+
+      // --- Wave paths (animated layers) ---
+      const amp = 1 + pct * 14;
+      // Layer 1 paths (front wave)
+      const w1 = `M0,${25-amp} Q25,${25+amp} 50,${25-amp*0.7} T100,${25+amp*0.9} T150,${25-amp*0.6} T200,${25+amp*0.8} T250,${25-amp} T300,${25+amp*0.7} T350,${25-amp*0.5} T400,${25+amp*0.6}`;
+      ['sim-wave-path1a','sim-wave-path1b'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('d', w1);
       });
-      // Update panels
-      document.querySelectorAll('.step-panel').forEach(panel => {
-        panel.classList.toggle('active', parseInt(panel.dataset.step) === index);
+      // Layer 2 paths (back wave, offset)
+      const amp2 = amp * 0.6;
+      const w2 = `M0,${28+amp2*0.5} Q30,${28-amp2} 60,${28+amp2*0.7} T120,${28-amp2*0.8} T180,${28+amp2} T240,${28-amp2*0.6} T300,${28+amp2*0.9} T360,${28-amp2*0.5} T400,${28+amp2*0.7}`;
+      ['sim-wave-path2a','sim-wave-path2b'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('d', w2);
       });
+
+      // --- Wave animation speed (faster = rougher seas) ---
+      const layer1 = document.getElementById('sim-wave-layer1');
+      const layer2 = document.getElementById('sim-wave-layer2');
+      if (layer1) layer1.style.animationDuration = Math.max(1.2, 4 - pct * 3) + 's';
+      if (layer2) { layer2.style.animationDuration = Math.max(1.8, 6 - pct * 4.5) + 's'; layer2.style.opacity = 0.3 + pct * 0.5; }
+
+      // --- Cage bobbing intensity ---
+      const cage = document.getElementById('sim-cage');
+      if (cage) cage.style.setProperty('--bob-amount', (2 + pct * 10) + 'px');
+      if (cage) cage.style.animationDuration = Math.max(0.8, 3 - pct * 2) + 's';
+
+      // --- Clouds & rain ---
+      const clouds = document.getElementById('sim-clouds');
+      const rain = document.getElementById('sim-rain');
+      if (clouds) clouds.style.opacity = Math.min(1, pct * 1.8);
+      if (rain) rain.style.opacity = pct > 0.3 ? Math.min(1, (pct - 0.3) * 2) : 0;
+
+      // --- Data values ---
+      const waveHt = (0.3 + pct * 4.7).toFixed(1);
+      const wind = Math.round(5 + pct * 60);
+      document.getElementById('sim-wave-val').textContent = waveHt + 'm';
+      document.getElementById('sim-wind-val').textContent = wind + ' kts';
+
+      // --- Cage depth & status (depends on AutoDive) ---
+      const led = document.getElementById('sim-led');
+      const badge = document.getElementById('sim-status-badge');
+      const depthEl = document.getElementById('sim-depth-val');
+      const respEl = document.getElementById('sim-resp-val');
+      const riskEl = document.getElementById('sim-metric-risk');
+      const boatsEl = document.getElementById('sim-metric-boats');
+      const crewEl = document.getElementById('sim-metric-crew');
+
+      if (sim.autodiveOn) {
+        // AutoDive ON: cage submerges proportional to storm
+        const targetDepth = pct < 0.15 ? 0.5 : (0.5 + pct * 6.5);
+        const cageTop = 26 + pct * 48; // 26% (surface) to 74% (deep)
+        cage.style.top = cageTop + '%';
+        depthEl.textContent = targetDepth.toFixed(1) + 'm';
+        respEl.textContent = pct > 0.15 ? Math.round(20 + pct * 30) + 's' : '—';
+        led.className = 'sim-autodive-led on';
+
+        if (pct < 0.25) {
+          badge.className = 'sim-status protected';
+          badge.innerHTML = '<span class="sim-status-dot"></span>Protected';
+          riskEl.textContent = 'Low'; riskEl.style.color = '#4ecdc4';
+        } else if (pct < 0.55) {
+          badge.className = 'sim-status protected';
+          badge.innerHTML = '<span class="sim-status-dot"></span>Submerging';
+          riskEl.textContent = 'Low'; riskEl.style.color = '#4ecdc4';
+        } else {
+          badge.className = 'sim-status protected';
+          badge.innerHTML = '<span class="sim-status-dot"></span>Safe at Depth';
+          riskEl.textContent = 'Low'; riskEl.style.color = '#4ecdc4';
+        }
+        boatsEl.textContent = '0'; boatsEl.style.color = '#4ecdc4';
+        crewEl.textContent = '0'; crewEl.style.color = '#4ecdc4';
+      } else {
+        // AutoDive OFF: cage stays at surface
+        cage.style.top = '26%';
+        depthEl.textContent = '0.5m';
+        respEl.textContent = 'MANUAL';
+        respEl.style.color = '#ff6b6b';
+        led.className = 'sim-autodive-led off';
+
+        if (pct < 0.25) {
+          badge.className = 'sim-status protected';
+          badge.innerHTML = '<span class="sim-status-dot"></span>OK';
+          riskEl.textContent = 'Low'; riskEl.style.color = '#4ecdc4';
+          boatsEl.textContent = '0'; boatsEl.style.color = '#4ecdc4';
+          crewEl.textContent = '0'; crewEl.style.color = '#4ecdc4';
+        } else if (pct < 0.55) {
+          badge.className = 'sim-status warning';
+          badge.innerHTML = '<span class="sim-status-dot"></span>At Risk';
+          riskEl.textContent = 'Med'; riskEl.style.color = '#ffa500';
+          boatsEl.textContent = '2'; boatsEl.style.color = '#ffa500';
+          crewEl.textContent = '4'; crewEl.style.color = '#ffa500';
+        } else {
+          badge.className = 'sim-status danger';
+          badge.innerHTML = '<span class="sim-status-dot"></span>DANGER';
+          riskEl.textContent = 'High'; riskEl.style.color = '#ff6b6b';
+          boatsEl.textContent = '3'; boatsEl.style.color = '#ff6b6b';
+          crewEl.textContent = '6'; crewEl.style.color = '#ff6b6b';
+        }
+      }
+
+      // --- Determine step ---
+      let newStep;
+      if (pct < 0.15) newStep = 0;
+      else if (pct < 0.4) newStep = 1;
+      else if (pct < 0.7) newStep = 2;
+      else newStep = 3;
+
+      if (newStep !== sim.currentStep) {
+        sim.currentStep = newStep;
+        updateTimeline(newStep);
+        addLogForStep(newStep);
+      }
+    }
+
+    function toggleAutoDive() {
+      sim.autodiveOn = !sim.autodiveOn;
+      const track = document.getElementById('sim-toggle');
+      const label = document.getElementById('sim-toggle-label');
+      track.classList.toggle('on', sim.autodiveOn);
+      label.textContent = sim.autodiveOn ? 'AutoDive ON' : 'AutoDive OFF';
+      label.style.color = sim.autodiveOn ? '#4ecdc4' : '#ff6b6b';
+
+      // Add log entry for toggle
+      const logEl = document.getElementById('sim-log');
+      sim.logTime++;
+      const t = formatTime(sim.logTime);
+      if (sim.autodiveOn) {
+        addLog(t + ' — AutoDive engaged. Autonomous mode active.', 'safe');
+      } else {
+        addLog(t + ' — AutoDive DISENGAGED. Manual control required.', 'danger');
+      }
+
+      // Re-evaluate current storm state
+      updateStorm(sim.intensity);
+    }
+
+    function setPreset(type) {
+      let val;
+      if (type === 'calm') val = 0;
+      else if (type === 'moderate') val = 50;
+      else val = 100;
+      document.getElementById('sim-slider').value = val;
+      updateStorm(val);
+    }
+
+    function scrubToStep(step) {
+      const vals = [0, 30, 55, 90];
+      const val = vals[step] || 0;
+      document.getElementById('sim-slider').value = val;
+      updateStorm(val);
+    }
+
+    function updateTimeline(step) {
+      document.querySelectorAll('.sim-step').forEach((el, i) => {
+        el.classList.toggle('active', i <= step);
+      });
+    }
+
+    function formatTime(t) {
+      const h = Math.floor(t / 100);
+      const m = t % 100;
+      return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+    }
+
+    function addLog(msg, type) {
+      const logEl = document.getElementById('sim-log');
+      if (!logEl) return;
+      const entry = document.createElement('div');
+      entry.className = 'sim-log-entry' + (type ? ' ' + type : '');
+      entry.textContent = msg;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function addLogForStep(step) {
+      sim.logTime++;
+      const t = formatTime(sim.logTime);
+      const pct = sim.intensity / 100;
+      const waveHt = (0.3 + pct * 4.7).toFixed(1);
+
+      if (sim.autodiveOn) {
+        const stepLogs = [
+          [t + ' — All clear. Sea state nominal.', 'safe'],
+          [t + ' — Wave height exceeded 1.5m threshold.', 'alert'],
+          [t + ' — AutoDive set target depth to ' + (0.5 + pct * 6.5).toFixed(1) + 'm.', 'safe'],
+          [t + ' — Cage reached safe depth. Status: PROTECTED.', 'safe'],
+        ];
+        if (stepLogs[step]) addLog(stepLogs[step][0], stepLogs[step][1]);
+        if (step === 1) { sim.logTime++; addLog(formatTime(sim.logTime) + ' — Weather alert triggered. Evaluating conditions.', 'alert'); }
+        if (step === 3) { sim.logTime++; addLog(formatTime(sim.logTime) + ' — 0 boat trips required. 0 crew on water.', 'safe'); }
+      } else {
+        const offLogs = [
+          [t + ' — System offline. Manual monitoring required.', ''],
+          [t + ' — Wave height exceeded 1.5m. No auto-response.', 'alert'],
+          [t + ' — WARNING: Cage at surface. Waves ' + waveHt + 'm.', 'danger'],
+          [t + ' — CRITICAL: Manual intervention required — deploy boats.', 'danger'],
+        ];
+        if (offLogs[step]) addLog(offLogs[step][0], offLogs[step][1]);
+        if (step >= 2) { sim.logTime++; addLog(formatTime(sim.logTime) + ' — Estimated 3 boat trips, 6 crew needed.', 'danger'); }
+      }
     }
 
     // ==========================================
