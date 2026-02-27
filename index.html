@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoDive® — Autonomous Aquaculture Technology</title>
+  <meta name="description" content="AutoDive® replaces manual labor with AI-powered depth control — cutting costs, protecting crops, and scaling your aquaculture operation.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-navy': '#1B2A4A',
+            'slate-blue': '#5A6E82',
+            'steel-blue': '#7A8999',
+            'silver-gray': '#8A96A6',
+            'light-silver': '#B0B8C4',
+            'off-white': '#F2F4F7',
+            'text-dark': '#0F1D35',
+          },
+          fontFamily: {
+            'display': ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            'body': ['"Inter"', 'system-ui', 'sans-serif'],
+            'mono': ['"Space Grotesk"', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* ========================================
+       CSS CUSTOM PROPERTIES & BASE
+    ======================================== */
+    :root {
+      --color-brand-navy: #1B2A4A;
+      --color-slate-blue: #5A6E82;
+      --color-steel-blue: #7A8999;
+      --color-silver-gray: #8A96A6;
+      --color-light-silver: #B0B8C4;
+      --color-white: #FFFFFF;
+      --color-off-white: #F2F4F7;
+      --color-text-dark: #0F1D35;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--color-text-dark);
+      overflow-x: hidden;
+      background: var(--color-off-white);
+    }
+
+    /* ========================================
+       GRAIN / NOISE TEXTURE OVERLAY
+    ======================================== */
+    .grain {
+      position: relative;
+    }
+    .grain::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .grain > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ========================================
+       TYPOGRAPHY
+    ======================================== */
+    .font-display { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .font-body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-mono { font-family: 'Space Grotesk', monospace; }
+
+    .text-two-tone .accent {
+      color: var(--color-steel-blue);
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav-scrolled {
+      background: rgba(27, 42, 74, 0.97) !important;
+      backdrop-filter: blur(20px);
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+      box-shadow: 0 1px 30px rgba(0,0,0,0.15);
+    }
+
+    .nav-link {
+      position: relative;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.3s ease;
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: #fff;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--color-steel-blue);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    /* ========================================
+       BUTTONS
+    ======================================== */
+    .btn-primary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--color-brand-navy);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      letter-spacing: 0.02em;
+      border: 1.5px solid rgba(122, 137, 153, 0.3);
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--color-slate-blue);
+      transform: translateX(-101%);
+      transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .btn-primary:hover::before {
+      transform: translateX(0);
+    }
+    .btn-primary:hover {
+      border-color: var(--color-steel-blue);
+      transform: translateY(-1px);
+    }
+    .btn-primary span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      position: relative;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .btn-text::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--color-steel-blue);
+      transition: width 0.35s ease;
+    }
+    .btn-text:hover { color: #fff; }
+    .btn-text:hover::after { width: 100%; }
+
+    .btn-nav {
+      padding: 0.625rem 1.5rem;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1.5px solid rgba(122, 137, 153, 0.4);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .btn-nav:hover {
+      background: var(--color-slate-blue);
+      border-color: var(--color-slate-blue);
+    }
+
+    /* ========================================
+       SECTION LABEL
+    ======================================== */
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-silver-gray);
+    }
+    .section-label-dark {
+      color: var(--color-steel-blue);
+    }
+
+    /* ========================================
+       HERO SPECIFIC
+    ======================================== */
+    .hero-bg {
+      background: linear-gradient(165deg, #0F1D35 0%, #1B2A4A 35%, #243556 65%, #1B2A4A 100%);
+    }
+
+    .hero-headline {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-weight: 800;
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      color: #fff;
+    }
+
+    /* Section wave divider */
+    .wave-divider {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .wave-divider svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 60px;
+    }
+    .wave-divider-top {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      transform: rotate(180deg);
+    }
+    .wave-divider-top svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 60px;
+    }
+
+    .scroll-indicator {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--color-steel-blue), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+
+    /* ========================================
+       DOT GRID PATTERN (light sections)
+    ======================================== */
+    .dot-grid {
+      background-image: radial-gradient(circle, var(--color-light-silver) 0.75px, transparent 0.75px);
+      background-size: 28px 28px;
+      background-position: 14px 14px;
+    }
+
+    /* ========================================
+       HOW IT WORKS - STEP SLIDER
+    ======================================== */
+    .how-it-works-bg {
+      background: linear-gradient(170deg, #0F1D35 0%, #1B2A4A 50%, #1e3050 100%);
+    }
+
+    .step-slider-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .step-tab {
+      flex: 1;
+      padding: 1.25rem 1rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+      position: relative;
+    }
+    .step-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--color-steel-blue);
+      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .step-tab.active::after {
+      width: 100%;
+    }
+    .step-tab .step-number {
+      display: block;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 0.25rem;
+      transition: color 0.3s ease;
+    }
+    .step-tab.active .step-number {
+      color: var(--color-steel-blue);
+    }
+    .step-tab .step-label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.3s ease;
+    }
+    .step-tab.active .step-label {
+      color: #fff;
+    }
+    .step-tab:hover .step-label {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .step-panel {
+      display: none !important;
+      opacity: 0;
+    }
+    .step-panel.active {
+      display: grid !important;
+      animation: stepIn 0.5s ease forwards;
+    }
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .step-slider-nav { flex-wrap: wrap; }
+      .step-tab { flex: 1 1 45%; }
+    }
+
+    /* ========================================
+       MARKETS - 2x2 CARD GRID
+    ======================================== */
+    .market-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .market-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .market-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border: 1px solid rgba(27, 42, 74, 0.08);
+      background: #fff;
+    }
+    .market-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(15,29,53,0.1), 0 4px 12px rgba(15,29,53,0.05);
+      border-color: rgba(27, 42, 74, 0.15);
+    }
+    .market-card-image {
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .market-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .market-card:hover .market-card-image img {
+      transform: scale(1.04);
+    }
+    .market-card-body {
+      padding: 1.5rem;
+    }
+    .market-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+    .market-status.active-status {
+      background: rgba(27, 42, 74, 0.08);
+      color: var(--color-brand-navy);
+    }
+    .market-status.dev-status {
+      background: rgba(122, 137, 153, 0.1);
+      color: var(--color-slate-blue);
+    }
+    .market-status.vision-status {
+      background: rgba(176, 184, 196, 0.15);
+      color: var(--color-silver-gray);
+    }
+    .market-status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .market-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.3s ease;
+      padding: 0 1.5rem;
+    }
+    .market-card.expanded .market-expand {
+      max-height: 300px;
+      padding: 0 1.5rem 1.5rem;
+    }
+    .market-card .expand-icon {
+      transition: transform 0.3s ease;
+    }
+    .market-card.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    /* ========================================
+       STATS COUNTER
+    ======================================== */
+    .stat-number {
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    /* ========================================
+       TEAM CARDS
+    ======================================== */
+    .team-card {
+      background: #fff;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .team-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(15, 29, 53, 0.1), 0 4px 12px rgba(15, 29, 53, 0.05);
+    }
+    .team-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, #1B2A4A, #2a3f5f);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 50%, rgba(27, 42, 74, 0.2));
+    }
+
+    /* ========================================
+       NEWS CARDS
+    ======================================== */
+    .news-card {
+      position: relative;
+      padding-left: 1.75rem;
+      border-left: 2px solid var(--color-light-silver);
+      transition: border-color 0.3s ease;
+    }
+    .news-card:hover {
+      border-left-color: var(--color-brand-navy);
+    }
+    .news-card .news-date {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--color-steel-blue);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ========================================
+       CONTACT FORM
+    ======================================== */
+    .form-group {
+      position: relative;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 1.25rem 0 0.5rem;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-bottom-color: var(--color-steel-blue);
+    }
+    .form-group label {
+      position: absolute;
+      left: 0;
+      top: 0.875rem;
+      color: rgba(255,255,255,0.45);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .form-group input:focus ~ label,
+    .form-group input:not(:placeholder-shown) ~ label,
+    .form-group textarea:focus ~ label,
+    .form-group textarea:not(:placeholder-shown) ~ label,
+    .form-group select:focus ~ label,
+    .form-group select.has-value ~ label {
+      top: -0.25rem;
+      font-size: 0.6875rem;
+      color: var(--color-steel-blue);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .form-group select option {
+      background: var(--color-brand-navy);
+      color: #fff;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .form-success.show {
+      display: block;
+      animation: successIn 0.6s ease forwards;
+    }
+    @keyframes successIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1.125rem;
+      background: transparent;
+      border: 1.5px solid rgba(122, 137, 153, 0.4);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.2s ease;
+    }
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--color-slate-blue);
+      transform: translateY(101%);
+      transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .btn-submit:hover::before {
+      transform: translateY(0);
+    }
+    .btn-submit:hover {
+      border-color: var(--color-steel-blue);
+      transform: translateY(-1px);
+    }
+    .btn-submit span {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ========================================
+       PARTNER LOGOS
+    ======================================== */
+    .partner-logo {
+      color: rgba(255,255,255,0.35);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1rem 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .partner-logo:hover {
+      color: rgba(255,255,255,0.6);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    /* ========================================
+       SECTION DIVIDER
+    ======================================== */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-light-silver) 20%, var(--color-light-silver) 80%, transparent);
+    }
+
+    /* ========================================
+       MOBILE NAV
+    ======================================== */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 29, 53, 0.98);
+      z-index: 100;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+    }
+    .mobile-menu.open {
+      display: flex;
+    }
+    .mobile-menu a {
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      transition: color 0.3s ease;
+    }
+    .mobile-menu a:hover {
+      color: var(--color-steel-blue);
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+    @media (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+      .hero-headline {
+        font-size: 2.75rem !important;
+        line-height: 1 !important;
+      }
+      .section-headline {
+        font-size: 2rem !important;
+      }
+      .step-slider-nav {
+        flex-wrap: wrap;
+      }
+      .step-tab {
+        flex: 1 1 45%;
+      }
+      .wave-divider svg {
+        height: 30px;
+      }
+    }
+    @media (min-width: 769px) and (max-width: 1199px) {
+      .hero-headline {
+        font-size: 4.5rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       NAVIGATION
+  ============================================= -->
+  <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 transition-all duration-500" style="padding: 1.5rem 0;">
+    <div class="max-w-[1340px] mx-auto px-6 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="flex items-center z-10">
+        <img src="https://static1.mysiteserver.net/Images/aicontroltechnologies/site/template/AutoDive_r__Logo.png" alt="AutoDive®" class="h-10 lg:h-12 w-auto" style="filter: brightness(1.1);">
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="#about" class="nav-link" data-section="about">About</a>
+        <a href="#technology" class="nav-link" data-section="technology">Technology</a>
+        <a href="#markets" class="nav-link" data-section="markets">Markets</a>
+        <a href="#team" class="nav-link" data-section="team">Team</a>
+        <a href="#news" class="nav-link" data-section="news">News</a>
+        <a href="#contact" class="btn-nav">Get Started</a>
+      </div>
+
+      <!-- Mobile Toggle -->
+      <button id="mobile-toggle" class="lg:hidden z-10 text-white" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" class="menu-line-1" />
+          <line x1="3" y1="12" x2="21" y2="12" class="menu-line-2" />
+          <line x1="8" y1="18" x2="21" y2="18" class="menu-line-3" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="#about" onclick="closeMobileMenu()">About</a>
+    <a href="#technology" onclick="closeMobileMenu()">Technology</a>
+    <a href="#markets" onclick="closeMobileMenu()">Markets</a>
+    <a href="#team" onclick="closeMobileMenu()">Team</a>
+    <a href="#news" onclick="closeMobileMenu()">News</a>
+    <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+  </div>
+
+
+  <!-- =============================================
+       HERO SECTION
+  ============================================= -->
+  <section id="hero" class="relative min-h-screen flex flex-col justify-center overflow-hidden">
+    <!-- Full-bleed looping video background -->
+    <video class="absolute inset-0 w-full h-full object-cover z-0" autoplay muted loop playsinline poster="https://www.autodive.com/Images/aicontroltechnologies/site/images/banners/banner-home.jpg">
+      <source src="https://www.autodive.com/Images/aicontroltechnologies/site/video/AIControlOyster.mp4" type="video/mp4">
+    </video>
+    <!-- Dark gradient overlay for readability -->
+    <div class="absolute inset-0 z-[1]" style="background: linear-gradient(170deg, rgba(10,21,37,0.88) 0%, rgba(27,42,74,0.78) 40%, rgba(15,29,53,0.85) 100%);"></div>
+    <!-- Grain -->
+    <div class="grain absolute inset-0 z-[2] pointer-events-none"></div>
+
+    <div class="max-w-[1340px] mx-auto px-6 pt-32 pb-20 lg:pt-40 lg:pb-28 relative z-[3]">
+      <!-- Section Label -->
+      <div class="hero-label section-label mb-8 opacity-0">AUTODIVE®</div>
+
+      <!-- Headline — farmer language, not AI jargon -->
+      <h1 class="hero-headline text-[2.75rem] md:text-[4.5rem] lg:text-[6.5rem] mb-8">
+        <span class="hero-line block overflow-hidden"><span class="hero-word inline-block opacity-0">Autonomous Depth</span></span>
+        <span class="hero-line block overflow-hidden"><span class="hero-word inline-block opacity-0">Control for</span></span>
+        <span class="hero-line block overflow-hidden"><span class="hero-word inline-block opacity-0 accent" style="color: var(--color-steel-blue);">Aquaculture</span></span>
+      </h1>
+
+      <!-- Subheadline — concrete farmer outcome -->
+      <p class="hero-sub text-lg lg:text-xl max-w-2xl leading-relaxed opacity-0" style="color: rgba(255,255,255,0.7);">
+        Move your crops to the safest, most productive depth — without leaving shore. AutoDive<sup>®</sup> automates what used to take boats, ropes, and manpower.
+      </p>
+
+      <!-- CTAs -->
+      <div class="hero-ctas flex flex-wrap items-center gap-5 mt-10 opacity-0">
+        <a href="#demo" class="btn-primary"><span>Watch Live Demo</span></a>
+        <a href="#technology" class="btn-text">See How It Works <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-scroll opacity-0 z-[3]">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-silver-gray font-medium">Scroll</span>
+      <div class="scroll-indicator"></div>
+    </div>
+
+    <!-- Wave divider -->
+    <div class="wave-divider z-[4]">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+        <path d="M0,30 C360,60 720,0 1440,30 L1440,60 L0,60 Z" fill="#F2F4F7"/>
+      </svg>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       WHAT IS AUTODIVE — Problem / Solution
+  ============================================= -->
+  <section id="about" class="relative py-24 lg:py-36" style="background: var(--color-off-white);">
+    <div class="dot-grid absolute inset-0 opacity-40 pointer-events-none"></div>
+    <div class="max-w-[1340px] mx-auto px-6 relative">
+      <div class="section-label section-label-dark mb-6 about-reveal">02 / THE CHALLENGE</div>
+
+      <!-- Asymmetric split: large headline + offset content -->
+      <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <!-- Left: Big headline -->
+        <div class="lg:col-span-7 about-reveal">
+          <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.75rem] lg:text-[3.75rem] leading-[1.05] tracking-tight">
+            Aquaculture today is<br>
+            <span class="text-two-tone"><span class="accent">manual, risky,</span> and<br>impossible to scale.</span>
+          </h2>
+        </div>
+
+        <!-- Right: Problem description (offset down) -->
+        <div class="lg:col-span-5 lg:pt-8 about-reveal">
+          <p class="text-lg leading-relaxed" style="color: var(--color-slate-blue);">
+            Farmers physically manage buoyancy, depth, and crop exposure by hand. Weather, waves, predators, and tides can destroy entire harvests overnight. Scaling offshore? Nearly impossible without automation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Visual: The challenge of manual aquaculture -->
+      <div class="mt-16 lg:mt-20 about-reveal relative overflow-hidden" style="border-radius: 2px;">
+        <img src="aquaculture-cage.jpg"
+             alt="Aquaculture cages in open ocean — the challenge of offshore farming"
+             class="w-full h-48 lg:h-72 object-cover" style="object-position: center 50%;">
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(15,29,53,0.6), transparent 50%, rgba(15,29,53,0.4));"></div>
+        <div class="absolute bottom-4 left-6 z-10">
+          <span class="font-mono text-xs tracking-wide text-white/60 uppercase">Manual farming — the problem AutoDive solves</span>
+        </div>
+      </div>
+
+      <!-- Solution bar -->
+      <div class="mt-16 lg:mt-24 about-reveal">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="h-px flex-1 bg-light-silver"></div>
+          <span class="section-label section-label-dark">THE SOLUTION</span>
+          <div class="h-px flex-1 bg-light-silver"></div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-12 items-start mb-12">
+          <div class="lg:col-span-5">
+            <h3 class="font-display font-bold text-text-dark text-2xl lg:text-3xl leading-tight tracking-tight mb-4">
+              AutoDive<sup>®</sup> automates what farmers do manually.
+            </h3>
+          </div>
+          <div class="lg:col-span-6 lg:col-start-7 flex items-end">
+            <p class="text-base leading-relaxed" style="color: var(--color-slate-blue);">
+              Our patented Depth Control Engine reads weather, wave, and water data — then adjusts your crop depth automatically. Monitor and control from shore, your phone, or your kitchen table. No boat trips. No guesswork.
+            </p>
+          </div>
+        </div>
+
+        <!-- Value Props — full-width grid -->
+        <div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-x-12 gap-y-6">
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="waves" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Autonomous Depth Control</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Adjusts cage depth based on real ocean conditions</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="shield-check" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Protect Crops</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Submerges crops below wave damage automatically</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="users" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Reduce Labor</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Fewer boat trips, fewer crew, lower overhead</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="fish" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Reduces Predation</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Less surface exposure, better growth</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="anchor" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Scale Offshore</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Move into deeper, more productive waters</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="trending-down" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Cut Costs</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Lower farm-to-market expenses</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Increase Yields</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Optimize feeding and growth cycles</p>
+                </div>
+              </div>
+              <div class="value-prop flex gap-4 items-start about-reveal">
+                <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
+                  <i data-lucide="hard-hat" class="w-5 h-5" style="color: var(--color-steel-blue);"></i>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-sm text-text-dark mb-0.5">Improve Safety</h4>
+                  <p class="text-sm" style="color: var(--color-silver-gray);">Keeps crew on shore, out of rough seas</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       HOW IT WORKS — Interactive Step Slider
+  ============================================= -->
+  <section id="technology" class="how-it-works-bg grain relative">
+    <div class="py-24 lg:py-36">
+      <div class="max-w-[1340px] mx-auto px-6">
+        <!-- Header -->
+        <div class="section-label mb-6 tech-reveal" style="color: var(--color-silver-gray);">03 / HOW IT WORKS</div>
+        <div class="grid lg:grid-cols-12 gap-8 mb-16">
+          <div class="lg:col-span-7 tech-reveal">
+            <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight">
+              From Storm Warning to<br><span class="accent" style="color: var(--color-steel-blue);">Protected Harvest</span>
+            </h2>
+          </div>
+          <div class="lg:col-span-4 lg:col-start-9 flex items-end tech-reveal">
+            <p class="text-base leading-relaxed" style="color: rgba(255,255,255,0.55);">
+              AutoDive responds to real ocean conditions in real time — no crew, no boats, no manual intervention.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step Tab Navigation -->
+        <div class="step-slider-nav tech-reveal">
+          <button class="step-tab active" data-step="0" onclick="switchStep(0)">
+            <span class="step-number">01</span>
+            <span class="step-label">Storm Incoming</span>
+          </button>
+          <button class="step-tab" data-step="1" onclick="switchStep(1)">
+            <span class="step-number">02</span>
+            <span class="step-label">System Detects</span>
+          </button>
+          <button class="step-tab" data-step="2" onclick="switchStep(2)">
+            <span class="step-number">03</span>
+            <span class="step-label">Cages Submerge</span>
+          </button>
+          <button class="step-tab" data-step="3" onclick="switchStep(3)">
+            <span class="step-number">04</span>
+            <span class="step-label">Crops Protected</span>
+          </button>
+        </div>
+
+        <!-- Step Content Panels -->
+        <div class="mt-12" id="step-panels">
+          <!-- Step 0: Storm Incoming -->
+          <div class="step-panel active grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="0">
+            <div class="lg:col-span-5">
+              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
+                A storm rolls in off the coast
+              </h3>
+              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
+                A nor'easter, hurricane, or heavy wave event is bearing down. Traditionally, farmers scramble boats to manually lower gear before it hits — or risk losing the entire crop.
+              </p>
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
+                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Weather alert triggered</span>
+              </div>
+            </div>
+            <div class="lg:col-span-7">
+              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
+                <defs>
+                  <linearGradient id="sw1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
+                </defs>
+                <rect x="0" y="80" width="700" height="220" fill="url(#sw1)" rx="4"/>
+                <!-- Storm clouds -->
+                <ellipse cx="200" cy="30" rx="100" ry="25" fill="#1e3050" opacity="0.8"/>
+                <ellipse cx="300" cy="22" rx="80" ry="22" fill="#243556" opacity="0.7"/>
+                <ellipse cx="150" cy="38" rx="60" ry="18" fill="#1e3050" opacity="0.6"/>
+                <!-- Rain lines -->
+                <line x1="160" y1="55" x2="155" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.4"/>
+                <line x1="200" y1="50" x2="195" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.3"/>
+                <line x1="240" y1="48" x2="235" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.4"/>
+                <line x1="280" y1="52" x2="275" y2="78" stroke="#5A6E82" stroke-width="1" opacity="0.3"/>
+                <!-- Rough waves -->
+                <path d="M0,80 Q35,60 70,80 T140,78 T210,82 T280,76 T350,83 T420,77 T490,82 T560,78 T630,83 T700,78" stroke="#5A6E82" stroke-width="2" fill="none" opacity="0.7"/>
+                <!-- Farm at surface - vulnerable -->
+                <rect x="350" y="85" width="200" height="6" fill="#5A6E82" rx="2"/>
+                <line x1="380" y1="91" x2="380" y2="160" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="450" y1="91" x2="450" y2="160" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="520" y1="91" x2="520" y2="160" stroke="#7A8999" stroke-width="1.5"/>
+                <rect x="365" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="435" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="505" y="145" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <!-- Warning text -->
+                <text x="80" y="130" fill="#8A96A6" font-family="Space Grotesk" font-size="10" letter-spacing="0.06em">WAVE HT: 2.4m</text>
+                <text x="80" y="145" fill="#8A96A6" font-family="Space Grotesk" font-size="10" letter-spacing="0.06em">WIND: 35 kts</text>
+                <polygon points="60,122 68,136 52,136" fill="none" stroke="#8A96A6" stroke-width="1.5"/>
+                <text x="60" y="133" fill="#8A96A6" font-family="Inter" font-size="8" text-anchor="middle">!</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Step 1: System Detects -->
+          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="1">
+            <div class="lg:col-span-5">
+              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
+                Sensors read the conditions
+              </h3>
+              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
+                AutoDive's onboard sensors pick up wave height, temperature, and current data. The system cross-references NOAA forecasts and determines the safest depth for your crop — all without human input.
+              </p>
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
+                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Processing environmental data</span>
+              </div>
+            </div>
+            <div class="lg:col-span-7">
+              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
+                <defs>
+                  <linearGradient id="sw2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
+                </defs>
+                <rect x="0" y="70" width="700" height="230" fill="url(#sw2)" rx="4"/>
+                <path d="M0,70 Q40,58 80,70 T160,68 T240,72 T320,67 T400,73 T480,68 T560,72 T640,69 T700,72" stroke="#5A6E82" stroke-width="1.5" fill="none" opacity="0.6"/>
+                <!-- AutoDive engine on structure -->
+                <rect x="300" y="90" width="200" height="6" fill="#5A6E82" rx="2"/>
+                <rect x="385" y="76" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
+                <!-- Pulsing sensor nodes -->
+                <circle cx="330" cy="93" r="4" fill="#8A96A6"><animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/></circle>
+                <circle cx="470" cy="93" r="4" fill="#8A96A6"><animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+                <!-- Data flowing to dashboard -->
+                <line x1="400" y1="78" x2="580" y2="45" stroke="#7A8999" stroke-width="1" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/></line>
+                <!-- Dashboard panel -->
+                <rect x="540" y="30" width="140" height="95" fill="rgba(27,42,74,0.7)" rx="3" stroke="#5A6E82" stroke-width="1"/>
+                <text x="555" y="50" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">WAVE HEIGHT</text>
+                <text x="555" y="64" fill="#B0B8C4" font-family="Space Grotesk" font-size="13" font-weight="600">2.4m</text>
+                <text x="555" y="82" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">RECOMMENDED</text>
+                <text x="555" y="96" fill="#B0B8C4" font-family="Space Grotesk" font-size="13" font-weight="600">SUBMERGE 4.2m</text>
+                <text x="555" y="116" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">STATUS</text>
+                <circle cx="555" cy="114" r="2" fill="#8A96A6"><animate attributeName="fill" values="#5A6E82;#B0B8C4;#5A6E82" dur="1s" repeatCount="indefinite"/></circle>
+                <!-- Lines and cages below -->
+                <line x1="330" y1="96" x2="330" y2="170" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="400" y1="96" x2="400" y2="170" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="470" y1="96" x2="470" y2="170" stroke="#7A8999" stroke-width="1.5"/>
+                <rect x="315" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="385" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="455" y="155" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Step 2: Cages Submerge -->
+          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="2">
+            <div class="lg:col-span-5">
+              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
+                Cages drop to safe depth
+              </h3>
+              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
+                The Depth Control Engine adjusts buoyancy and lowers your cages below the wave zone — automatically. No boats. No crew. No scrambling to beat the weather.
+              </p>
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-steel-blue animate-pulse"></div>
+                <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-steel-blue);">Depth adjustment in progress</span>
+              </div>
+            </div>
+            <div class="lg:col-span-7">
+              <svg viewBox="0 0 700 320" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
+                <defs>
+                  <linearGradient id="sw3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
+                </defs>
+                <rect x="0" y="70" width="700" height="250" fill="url(#sw3)" rx="4"/>
+                <!-- Storm waves above -->
+                <path d="M0,70 Q30,52 60,70 T120,68 T180,73 T240,66 T300,74 T360,67 T420,73 T480,68 T540,74 T600,69 T660,73 T700,68" stroke="#5A6E82" stroke-width="2" fill="none" opacity="0.7"/>
+                <!-- Farm structure - now deep underwater -->
+                <rect x="300" y="175" width="200" height="6" fill="#5A6E82" rx="2"/>
+                <rect x="385" y="162" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
+                <circle cx="400" cy="170" r="4" fill="#8A96A6"><animate attributeName="fill" values="#8A96A6;#B0B8C4;#8A96A6" dur="1s" repeatCount="indefinite"/></circle>
+                <line x1="330" y1="181" x2="330" y2="250" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="400" y1="181" x2="400" y2="250" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="470" y1="181" x2="470" y2="250" stroke="#7A8999" stroke-width="1.5"/>
+                <rect x="315" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="385" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="455" y="235" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <!-- Downward arrows -->
+                <line x1="255" y1="100" x2="255" y2="180" stroke="#7A8999" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="251,178 259,178 255,188" fill="#7A8999"/>
+                <text x="210" y="140" fill="#8A96A6" font-family="Space Grotesk" font-size="9" letter-spacing="0.06em">DEPTH</text>
+                <text x="210" y="152" fill="#8A96A6" font-family="Space Grotesk" font-size="9" letter-spacing="0.06em">4.2m</text>
+                <!-- Shore control -->
+                <rect x="585" y="52" width="30" height="18" fill="#5A6E82" rx="2"/>
+                <circle cx="600" cy="49" r="3" fill="#8A96A6"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/></circle>
+                <text x="600" y="82" fill="#8A96A6" font-family="Inter" font-size="8" text-anchor="middle" letter-spacing="0.06em">SHORE</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Step 3: Crops Protected -->
+          <div class="step-panel grid lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-step="3">
+            <div class="lg:col-span-5">
+              <h3 class="font-display font-bold text-white text-2xl lg:text-3xl mb-4 leading-tight">
+                Storm passes. Crop intact.
+              </h3>
+              <p class="text-base leading-relaxed mb-6" style="color: rgba(255,255,255,0.55);">
+                When conditions clear, AutoDive raises cages back to optimal growing depth. Zero product loss. Zero injury risk. You managed the whole event from your kitchen table.
+              </p>
+              <div class="grid grid-cols-2 gap-4 mt-6">
+                <div class="p-4" style="border-left: 2px solid var(--color-steel-blue);">
+                  <p class="font-mono text-2xl font-bold text-white">0</p>
+                  <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Crew deployed</p>
+                </div>
+                <div class="p-4" style="border-left: 2px solid var(--color-steel-blue);">
+                  <p class="font-mono text-2xl font-bold text-white">100%</p>
+                  <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Crop protected</p>
+                </div>
+              </div>
+            </div>
+            <div class="lg:col-span-7">
+              <svg viewBox="0 0 700 300" class="w-full" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.2));">
+                <defs>
+                  <linearGradient id="sw4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243556"/><stop offset="100%" stop-color="#0F1D35"/></linearGradient>
+                </defs>
+                <rect x="0" y="65" width="700" height="235" fill="url(#sw4)" rx="4"/>
+                <!-- Calm sky -->
+                <circle cx="600" cy="25" r="18" fill="#5A6E82" opacity="0.15"/>
+                <!-- Calm water -->
+                <path d="M0,65 Q50,60 100,65 T200,64 T300,66 T400,64 T500,65 T600,64 T700,65" stroke="#5A6E82" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <!-- Farm back at optimal depth -->
+                <rect x="300" y="100" width="200" height="6" fill="#5A6E82" rx="2"/>
+                <rect x="385" y="87" width="30" height="16" fill="#5A6E82" rx="3" stroke="#7A8999" stroke-width="1"/>
+                <circle cx="400" cy="95" r="4" fill="#8A96A6"/>
+                <line x1="330" y1="106" x2="330" y2="180" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="400" y1="106" x2="400" y2="180" stroke="#7A8999" stroke-width="1.5"/>
+                <line x1="470" y1="106" x2="470" y2="180" stroke="#7A8999" stroke-width="1.5"/>
+                <rect x="315" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="385" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <rect x="455" y="165" width="30" height="18" fill="none" stroke="#8A96A6" stroke-width="1" rx="2"/>
+                <!-- Upward arrows - rising back -->
+                <line x1="255" y1="175" x2="255" y2="105" stroke="#7A8999" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" values="0;14" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="251,107 259,107 255,97" fill="#7A8999"/>
+                <!-- Status readout -->
+                <rect x="540" y="100" width="140" height="75" fill="rgba(27,42,74,0.6)" rx="3" stroke="#5A6E82" stroke-width="1"/>
+                <text x="555" y="118" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">STATUS</text>
+                <text x="555" y="132" fill="#B0B8C4" font-family="Space Grotesk" font-size="12" font-weight="600">ALL CLEAR</text>
+                <text x="555" y="148" fill="#7A8999" font-family="Space Grotesk" font-size="8" letter-spacing="0.06em">CROP LOSS</text>
+                <text x="555" y="162" fill="#B0B8C4" font-family="Space Grotesk" font-size="12" font-weight="600">0%</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         LIVE DEMO — Video Centerpiece
+    ============================================= -->
+    <div id="demo" class="py-16 lg:py-28 relative">
+      <div class="max-w-[1340px] mx-auto px-6">
+        <div class="text-center mb-12 tech-reveal">
+          <div class="section-label mb-4" style="color: var(--color-silver-gray);">LIVE DEMONSTRATION</div>
+          <h2 class="font-display font-extrabold text-white section-headline text-[2.25rem] lg:text-[3rem] leading-[1.05] tracking-tight">
+            Watch It Work in<br><span class="accent" style="color: var(--color-steel-blue);">Real Ocean Conditions</span>
+          </h2>
+        </div>
+
+        <!-- Large centered video -->
+        <div class="relative rounded-sm overflow-hidden tech-reveal" style="aspect-ratio: 16/9; background: #0a1525; max-width: 1000px; margin: 0 auto;">
+          <video id="demo-video" class="w-full h-full object-cover" poster="https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-oysters2.jpg" playsinline>
+            <source src="https://www.autodive.com/Images/aicontroltechnologies/site/video/AIControlOyster.mp4" type="video/mp4">
+          </video>
+          <!-- Play button overlay -->
+          <div id="video-play-btn" class="absolute inset-0 flex items-center justify-center cursor-pointer z-10 transition-opacity duration-300" onclick="toggleVideo()" style="background: rgba(15,29,53,0.35);">
+            <div class="w-24 h-24 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19"/></svg>
+            </div>
+          </div>
+          <!-- Stat callouts overlaid on video -->
+          <div class="absolute bottom-0 left-0 right-0 z-20 p-6 lg:p-8 flex flex-wrap gap-6 lg:gap-10 items-end" style="background: linear-gradient(to top, rgba(10,21,37,0.85) 0%, transparent 100%);">
+            <div>
+              <p class="font-mono text-2xl lg:text-3xl font-bold text-white">24/7</p>
+              <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">Autonomous operation</p>
+            </div>
+            <div>
+              <p class="font-mono text-2xl lg:text-3xl font-bold text-white">4.2m</p>
+              <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">Max depth control</p>
+            </div>
+            <div>
+              <p class="font-mono text-2xl lg:text-3xl font-bold text-white">&lt;60s</p>
+              <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">Response time</p>
+            </div>
+            <div class="ml-auto hidden lg:block">
+              <span class="font-mono text-[10px] tracking-wide uppercase px-3 py-1.5" style="background: rgba(122,137,153,0.2); color: rgba(255,255,255,0.5);">Oyster Cage Demo — Gulf of Mexico</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA below video -->
+        <div class="text-center mt-10 tech-reveal">
+          <a href="#contact" class="btn-primary"><span>Request a Live Walkthrough of Your Farm</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Illustration -->
+    <div class="py-8 lg:py-12">
+      <div class="max-w-[1340px] mx-auto px-6">
+        <div class="relative rounded-sm overflow-hidden tech-reveal" style="border: 1px solid rgba(122,137,153,0.1);">
+          <img src="https://static5.mysiteserver.net/w/1666/h/1178/p/Images/aicontroltechnologies/site/images/AutoDive_Design_Illustrations_20251012_CW_page-0001_comp.jpgx"
+               alt="AutoDive Depth Control Engine technical illustration"
+               class="w-full h-auto" style="opacity: 0.85;">
+          <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.6) 0%, transparent 30%, transparent 70%, rgba(15,29,53,0.3) 100%);"></div>
+          <div class="absolute bottom-4 left-6 z-10">
+            <span class="font-mono text-xs tracking-wide text-white/50 uppercase">AutoDive<sup>®</sup> Depth Control Engine — System Architecture</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- =============================================
+       MARKETS — 2x2 Card Grid
+  ============================================= -->
+  <section id="markets" class="relative py-24 lg:py-36" style="background: var(--color-off-white);">
+    <div class="dot-grid absolute inset-0 opacity-30 pointer-events-none"></div>
+    <div class="max-w-[1340px] mx-auto px-6 relative">
+      <!-- Header -->
+      <div class="grid lg:grid-cols-12 gap-8 mb-14">
+        <div class="lg:col-span-5">
+          <div class="section-label section-label-dark mb-4 market-reveal">04 / MARKETS</div>
+          <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight market-reveal">
+            Built for the Species<br><span class="text-two-tone"><span class="accent">That Feed the World</span></span>
+          </h2>
+        </div>
+        <div class="lg:col-span-5 lg:col-start-8 flex items-end market-reveal">
+          <p class="text-lg leading-relaxed" style="color: var(--color-slate-blue);">
+            One platform, four markets. From active Gulf oyster deployments to the frontier of offshore kelp and fin fish — AutoDive adapts to each species.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2x2 Card Grid -->
+      <div class="market-card-grid market-reveal" id="market-cards">
+        <!-- Oysters -->
+        <div class="market-card" onclick="toggleMarketCard(this)">
+          <div class="market-card-image">
+            <img src="https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-oysters2.jpg" alt="Oyster farming">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.7) 0%, rgba(15,29,53,0.1) 50%);"></div>
+            <div class="absolute bottom-4 left-5 right-5 z-10 flex items-end justify-between">
+              <div>
+                <img src="https://static2.mysiteserver.net/Images/aicontroltechnologies/site/images/universal/oysters.png" alt="" class="w-8 h-8 mb-1.5 opacity-80">
+                <h3 class="font-display font-bold text-white text-xl">Oysters</h3>
+              </div>
+              <div class="market-status active-status" style="background: rgba(255,255,255,0.15); color: #fff;">
+                <span class="market-status-dot"></span> Deployed
+              </div>
+            </div>
+          </div>
+          <div class="market-card-body">
+            <p class="text-sm leading-relaxed" style="color: var(--color-slate-blue);">Automates cage flipping, desiccation cycles, and depth control for Gulf of Mexico oyster farms.</p>
+            <div class="flex items-center gap-2 mt-3 text-brand-navy">
+              <span class="text-xs font-medium">See details</span>
+              <svg class="w-3 h-3 expand-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+          </div>
+          <div class="market-expand">
+            <div class="pt-2 pb-1 border-t" style="border-color: rgba(27,42,74,0.08);">
+              <h4 class="font-display font-semibold text-sm text-text-dark mb-2">How it helps oyster farmers:</h4>
+              <ul class="space-y-1.5 text-sm" style="color: var(--color-slate-blue);">
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Automated feeding and desiccation emulation cycles</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Storm protection — cages submerge before waves hit</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Manage your entire farm from shore, phone, or tablet</li>
+              </ul>
+              <a href="#contact" class="inline-flex items-center gap-1.5 font-medium text-brand-navy text-xs mt-4 hover:text-slate-blue transition-colors">Talk to us about oysters <span>&rarr;</span></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mussels -->
+        <div class="market-card" onclick="toggleMarketCard(this)">
+          <div class="market-card-image">
+            <img src="https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-mussels.jpg" alt="Mussel farming">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.7) 0%, rgba(15,29,53,0.1) 50%);"></div>
+            <div class="absolute bottom-4 left-5 right-5 z-10 flex items-end justify-between">
+              <div>
+                <img src="https://static3.mysiteserver.net/Images/aicontroltechnologies/site/images/universal/mussels.png" alt="" class="w-8 h-8 mb-1.5 opacity-80">
+                <h3 class="font-display font-bold text-white text-xl">Mussels</h3>
+              </div>
+              <div class="market-status dev-status" style="background: rgba(255,255,255,0.15); color: #fff;">
+                <span class="market-status-dot"></span> In Development
+              </div>
+            </div>
+          </div>
+          <div class="market-card-body">
+            <p class="text-sm leading-relaxed" style="color: var(--color-slate-blue);">Submersible rope platform for offshore mussel farming in deeper, nutrient-rich waters. USDA grant-funded.</p>
+            <div class="flex items-center gap-2 mt-3 text-brand-navy">
+              <span class="text-xs font-medium">See details</span>
+              <svg class="w-3 h-3 expand-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+          </div>
+          <div class="market-expand">
+            <div class="pt-2 pb-1 border-t" style="border-color: rgba(27,42,74,0.08);">
+              <h4 class="font-display font-semibold text-sm text-text-dark mb-2">How it helps mussel farmers:</h4>
+              <ul class="space-y-1.5 text-sm" style="color: var(--color-slate-blue);">
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Move from crowded nearshore to productive offshore sites</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Submersible platform survives storms without human intervention</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Funded by USDA grant for offshore aquaculture expansion</li>
+              </ul>
+              <a href="#contact" class="inline-flex items-center gap-1.5 font-medium text-brand-navy text-xs mt-4 hover:text-slate-blue transition-colors">Talk to us about mussels <span>&rarr;</span></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seaweed -->
+        <div class="market-card" onclick="toggleMarketCard(this)">
+          <div class="market-card-image">
+            <img src="https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-seaweed.jpg" alt="Seaweed farming">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.7) 0%, rgba(15,29,53,0.1) 50%);"></div>
+            <div class="absolute bottom-4 left-5 right-5 z-10 flex items-end justify-between">
+              <div>
+                <img src="https://static4.mysiteserver.net/Images/aicontroltechnologies/site/images/universal/seaweed.png" alt="" class="w-8 h-8 mb-1.5 opacity-80">
+                <h3 class="font-display font-bold text-white text-xl">Seaweed</h3>
+              </div>
+              <div class="market-status vision-status" style="background: rgba(255,255,255,0.15); color: #fff;">
+                <span class="market-status-dot"></span> Roadmap
+              </div>
+            </div>
+          </div>
+          <div class="market-card-body">
+            <p class="text-sm leading-relaxed" style="color: var(--color-slate-blue);">Depth control for kelp and seaweed ropes — optimizing light and nutrient access. DOE-funded research.</p>
+            <div class="flex items-center gap-2 mt-3 text-brand-navy">
+              <span class="text-xs font-medium">See details</span>
+              <svg class="w-3 h-3 expand-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+          </div>
+          <div class="market-expand">
+            <div class="pt-2 pb-1 border-t" style="border-color: rgba(27,42,74,0.08);">
+              <h4 class="font-display font-semibold text-sm text-text-dark mb-2">How it helps seaweed farmers:</h4>
+              <ul class="space-y-1.5 text-sm" style="color: var(--color-slate-blue);">
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Precise depth positioning for optimal light and nutrients</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Supports solo biofuel and multi-species IMTA operations</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Backed by U.S. Department of Energy macroalgae research</li>
+              </ul>
+              <a href="#contact" class="inline-flex items-center gap-1.5 font-medium text-brand-navy text-xs mt-4 hover:text-slate-blue transition-colors">Talk to us about seaweed <span>&rarr;</span></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fin Fish -->
+        <div class="market-card" onclick="toggleMarketCard(this)">
+          <div class="market-card-image">
+            <img src="https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-fin-fish.jpg" alt="Fin fish farming">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.7) 0%, rgba(15,29,53,0.1) 50%);"></div>
+            <div class="absolute bottom-4 left-5 right-5 z-10 flex items-end justify-between">
+              <div>
+                <img src="https://static5.mysiteserver.net/Images/aicontroltechnologies/site/images/universal/fin-fish.png" alt="" class="w-8 h-8 mb-1.5 opacity-80">
+                <h3 class="font-display font-bold text-white text-xl">Fin Fish</h3>
+              </div>
+              <div class="market-status vision-status" style="background: rgba(255,255,255,0.15); color: #fff;">
+                <span class="market-status-dot"></span> Roadmap
+              </div>
+            </div>
+          </div>
+          <div class="market-card-body">
+            <p class="text-sm leading-relaxed" style="color: var(--color-slate-blue);">Smart buoyancy control for offshore pens and nets. Remote management, IMTA compatible.</p>
+            <div class="flex items-center gap-2 mt-3 text-brand-navy">
+              <span class="text-xs font-medium">See details</span>
+              <svg class="w-3 h-3 expand-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+          </div>
+          <div class="market-expand">
+            <div class="pt-2 pb-1 border-t" style="border-color: rgba(27,42,74,0.08);">
+              <h4 class="font-display font-semibold text-sm text-text-dark mb-2">How it helps fin fish farmers:</h4>
+              <ul class="space-y-1.5 text-sm" style="color: var(--color-slate-blue);">
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Pen depth control for storm avoidance and feeding optimization</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Remote operation from shore or vessel</li>
+                <li class="flex gap-2 items-start"><span style="color: var(--color-steel-blue);">&#8226;</span> Compatible with multi-species integrated farming (IMTA)</li>
+              </ul>
+              <a href="#contact" class="inline-flex items-center gap-1.5 font-medium text-brand-navy text-xs mt-4 hover:text-slate-blue transition-colors">Talk to us about fin fish <span>&rarr;</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       BY THE NUMBERS / SOCIAL PROOF
+  ============================================= -->
+  <section id="stats" class="grain relative py-24 lg:py-32" style="background: linear-gradient(170deg, #0F1D35 0%, #1B2A4A 60%, #1e3050 100%);">
+    <!-- Water texture background -->
+    <div class="absolute inset-0 z-0" style="background: url('https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-blue-texture.jpg') center/cover no-repeat; opacity: 0.06; mix-blend-mode: luminosity;"></div>
+    <!-- Subtle glow -->
+    <div class="absolute top-1/3 left-1/4 w-full max-w-[600px] h-[400px] rounded-full pointer-events-none"
+         style="background: radial-gradient(circle, rgba(90,110,130,0.06) 0%, transparent 70%);"></div>
+
+    <div class="max-w-[1340px] mx-auto px-6 relative">
+      <div class="section-label mb-6 stat-reveal" style="color: var(--color-silver-gray);">05 / BY THE NUMBERS</div>
+      <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight mb-16 stat-reveal">
+        Backed by Science.<br><span class="accent" style="color: var(--color-steel-blue);">Proven in the Field.</span>
+      </h2>
+
+      <!-- Stats Grid - asymmetric -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-4 mb-20">
+        <div class="stat-reveal lg:pr-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
+          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="24" data-prefix="$" data-suffix="T+">$0</div>
+          <p class="text-sm" style="color: var(--color-silver-gray);">Global ocean economy</p>
+        </div>
+        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
+          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="970" data-prefix="$" data-suffix="K+">$0</div>
+          <p class="text-sm" style="color: var(--color-silver-gray);">Funding raised to date</p>
+        </div>
+        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
+          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="3" data-prefix="" data-suffix="">0</div>
+          <p class="text-sm" style="color: var(--color-silver-gray);">Government partnerships</p>
+        </div>
+        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
+          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="4" data-prefix="" data-suffix="">0</div>
+          <p class="text-sm" style="color: var(--color-silver-gray);">Aquaculture markets</p>
+        </div>
+        <div class="stat-reveal lg:pl-4">
+          <div class="stat-number text-4xl lg:text-5xl text-white mb-2">1st</div>
+          <p class="text-sm" style="color: var(--color-silver-gray);">Autonomous depth control in aquaculture</p>
+        </div>
+      </div>
+
+      <!-- Partner Logos -->
+      <div class="stat-reveal">
+        <p class="text-xs uppercase tracking-[0.15em] mb-6" style="color: var(--color-silver-gray);">Backed & Supported By</p>
+        <div class="flex flex-wrap gap-3">
+          <div class="partner-logo">U.S. Dept. of Energy</div>
+          <div class="partner-logo">USDA</div>
+          <div class="partner-logo">Hatch Blue</div>
+          <div class="partner-logo">Keiretsu Forum</div>
+          <div class="partner-logo">SeaAhead</div>
+          <div class="partner-logo">Innovate Mississippi</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       TEAM SECTION
+  ============================================= -->
+  <section id="team" class="relative py-24 lg:py-36" style="background: #fff;">
+    <div class="max-w-[1340px] mx-auto px-6">
+      <!-- Header -->
+      <div class="grid lg:grid-cols-12 gap-8 mb-16">
+        <div class="lg:col-span-6">
+          <div class="section-label section-label-dark mb-4 team-reveal">06 / LEADERSHIP</div>
+          <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight team-reveal">
+            Built by Inventors<br><span class="text-two-tone"><span class="accent">&amp; Operators</span></span>
+          </h2>
+        </div>
+        <div class="lg:col-span-5 lg:col-start-8 flex items-end team-reveal">
+          <p class="text-base leading-relaxed" style="color: var(--color-slate-blue);">
+            AutoDive was founded by inventor Chris Webb to solve a decades-old problem in aquaculture: manual buoyancy control. Backed by the Department of Energy, Hatch Blue, and a growing network of investors, we're building the infrastructure for the next generation of ocean farming.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team Cards - offset grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="team-card team-reveal" style="box-shadow: 0 2px 8px rgba(15,29,53,0.06);">
+          <div class="team-photo">
+            <img src="https://static6.mysiteserver.net/Images/aicontroltechnologies/site/images/staff/updated-8-26-2024/2.png" alt="Chris Webb" class="absolute inset-0 w-full h-full object-cover object-top">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.3), transparent 50%);"></div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display font-bold text-text-dark text-base">Chris Webb</h3>
+            <p class="text-sm mt-1" style="color: var(--color-steel-blue);">Founder & President</p>
+            <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Entrepreneur & Inventor</p>
+          </div>
+        </div>
+
+        <div class="team-card team-reveal lg:mt-8" style="box-shadow: 0 2px 8px rgba(15,29,53,0.06);">
+          <div class="team-photo">
+            <img src="https://static7.mysiteserver.net/Images/aicontroltechnologies/site/images/staff/updated-8-26-2024/1.png" alt="Stephen McCarty" class="absolute inset-0 w-full h-full object-cover object-top">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.3), transparent 50%);"></div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display font-bold text-text-dark text-base">Stephen McCarty</h3>
+            <p class="text-sm mt-1" style="color: var(--color-steel-blue);">CEO</p>
+            <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Tech "Scale to Exit" Leader</p>
+          </div>
+        </div>
+
+        <div class="team-card team-reveal" style="box-shadow: 0 2px 8px rgba(15,29,53,0.06);">
+          <div class="team-photo">
+            <img src="https://static8.mysiteserver.net/Images/aicontroltechnologies/site/images/staff/updated-8-26-2024/AICT-Headshots.png" alt="Clay Culbert" class="absolute inset-0 w-full h-full object-cover object-top">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.3), transparent 50%);"></div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display font-bold text-text-dark text-base">Clay Culbert</h3>
+            <p class="text-sm mt-1" style="color: var(--color-steel-blue);">Dir. of Customer Partnerships</p>
+            <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Business Development</p>
+          </div>
+        </div>
+
+        <div class="team-card team-reveal lg:mt-8" style="box-shadow: 0 2px 8px rgba(15,29,53,0.06);">
+          <div class="team-photo">
+            <img src="https://static9.mysiteserver.net/Images/aicontroltechnologies/site/images/staff/updated-8-26-2024/4.png" alt="Tim Matuszewski" class="absolute inset-0 w-full h-full object-cover object-top">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(15,29,53,0.3), transparent 50%);"></div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display font-bold text-text-dark text-base">Tim Matuszewski</h3>
+            <p class="text-sm mt-1" style="color: var(--color-steel-blue);">Chief Strategy Officer</p>
+            <p class="text-xs mt-1" style="color: var(--color-silver-gray);">Strategic Growth</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       NEWS / PRESS
+  ============================================= -->
+  <section id="news" class="relative py-24 lg:py-32" style="background: var(--color-off-white);">
+    <div class="max-w-[1340px] mx-auto px-6">
+      <div class="grid lg:grid-cols-12 gap-12">
+        <!-- Left: header -->
+        <div class="lg:col-span-4">
+          <div class="section-label section-label-dark mb-4 news-reveal">07 / NEWS</div>
+          <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.25rem] lg:text-[2.75rem] leading-[1.05] tracking-tight news-reveal">
+            Latest<br>Updates
+          </h2>
+        </div>
+
+        <!-- Right: news cards -->
+        <div class="lg:col-span-7 lg:col-start-6 space-y-10">
+          <div class="news-card news-reveal">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="news-date">October 2025</span>
+              <span class="text-xs px-2 py-0.5 font-medium" style="background: rgba(27,42,74,0.06); color: var(--color-brand-navy);">Latest</span>
+            </div>
+            <h3 class="font-display font-bold text-text-dark text-lg lg:text-xl leading-snug mb-2">
+              New Bedford Demonstration of Submersible Ocean Technology Platform
+            </h3>
+            <p class="text-sm leading-relaxed mb-3" style="color: var(--color-slate-blue);">
+              AutoDive showcases its submersible platform technology in a live demonstration off the coast of New Bedford, Massachusetts.
+            </p>
+            <a href="#contact" class="text-sm font-medium text-brand-navy hover:text-slate-blue transition-colors inline-flex items-center gap-1">
+              Read More <span>&rarr;</span>
+            </a>
+          </div>
+
+          <div class="news-card news-reveal">
+            <div class="mb-3">
+              <span class="news-date">February 2025</span>
+            </div>
+            <h3 class="font-display font-bold text-text-dark text-lg lg:text-xl leading-snug mb-2">
+              AI Control Technologies Inc. Announces the Appointment of a CEO
+            </h3>
+            <p class="text-sm leading-relaxed mb-3" style="color: var(--color-slate-blue);">
+              Stephen McCarty joins as CEO, bringing extensive experience in scaling technology companies from growth through exit.
+            </p>
+            <a href="#contact" class="text-sm font-medium text-brand-navy hover:text-slate-blue transition-colors inline-flex items-center gap-1">
+              Read More <span>&rarr;</span>
+            </a>
+          </div>
+
+          <div class="news-card news-reveal">
+            <div class="mb-3">
+              <span class="news-date">August 2024</span>
+            </div>
+            <h3 class="font-display font-bold text-text-dark text-lg lg:text-xl leading-snug mb-2">
+              Hatch Blue Opens Doors to Fresh Batch of Startups
+            </h3>
+            <p class="text-sm leading-relaxed mb-3" style="color: var(--color-slate-blue);">
+              AutoDive selected for the Hatch Blue accelerator program, joining a cohort of innovative aquaculture technology companies.
+            </p>
+            <a href="#contact" class="text-sm font-medium text-brand-navy hover:text-slate-blue transition-colors inline-flex items-center gap-1">
+              Read More <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       CONTACT / CONVERSION SECTION
+  ============================================= -->
+  <section id="contact" class="grain relative py-24 lg:py-36" style="background: linear-gradient(170deg, #0F1D35 0%, #1B2A4A 50%, #1e3050 100%);">
+    <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(122,137,153,0.2) 50%, transparent);"></div>
+
+    <div class="max-w-[1340px] mx-auto px-6 relative">
+      <div class="grid lg:grid-cols-12 gap-12 lg:gap-20">
+        <!-- Left: copy -->
+        <div class="lg:col-span-5">
+          <div class="section-label mb-6" style="color: var(--color-silver-gray);">08 / CONTACT</div>
+          <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight mb-6">
+            Ready to Automate<br><span class="accent" style="color: var(--color-steel-blue);">Your Farm?</span>
+          </h2>
+          <p class="text-lg leading-relaxed mb-10" style="color: rgba(255,255,255,0.6);">
+            Whether you're looking to reduce labor costs, scale offshore, or protect your crop — we'd love to show you what AutoDive can do for your operation.
+          </p>
+
+          <div class="space-y-5">
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5" style="border: 1px solid rgba(122,137,153,0.3); border-radius: 2px;">
+                <i data-lucide="monitor-play" class="w-4 h-4" style="color: var(--color-steel-blue);"></i>
+              </div>
+              <p class="text-sm" style="color: rgba(255,255,255,0.6);">Schedule a technology demo</p>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5" style="border: 1px solid rgba(122,137,153,0.3); border-radius: 2px;">
+                <i data-lucide="message-square" class="w-4 h-4" style="color: var(--color-steel-blue);"></i>
+              </div>
+              <p class="text-sm" style="color: rgba(255,255,255,0.6);">Discuss your specific farming needs</p>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5" style="border: 1px solid rgba(122,137,153,0.3); border-radius: 2px;">
+                <i data-lucide="handshake" class="w-4 h-4" style="color: var(--color-steel-blue);"></i>
+              </div>
+              <p class="text-sm" style="color: rgba(255,255,255,0.6);">Explore collaboration opportunities</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="lg:col-span-6 lg:col-start-7">
+          <form id="contact-form" class="space-y-8" onsubmit="handleSubmit(event)">
+            <div class="grid sm:grid-cols-2 gap-x-8 gap-y-8">
+              <div class="form-group">
+                <input type="text" id="name" placeholder=" " required>
+                <label for="name">Full Name *</label>
+              </div>
+              <div class="form-group">
+                <input type="email" id="email" placeholder=" " required>
+                <label for="email">Email Address *</label>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-x-8 gap-y-8">
+              <div class="form-group">
+                <input type="tel" id="phone" placeholder=" ">
+                <label for="phone">Phone Number</label>
+              </div>
+              <div class="form-group">
+                <input type="text" id="company" placeholder=" ">
+                <label for="company">Company / Farm Name</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <select id="operation" onchange="this.classList.toggle('has-value', this.value !== ''); this.style.color = this.value ? '#fff' : 'rgba(255,255,255,0.45)';" style="color: rgba(255,255,255,0.45);">
+                <option value="" disabled selected>Type of Operation</option>
+                <option value="oysters" style="color: #fff;">Oysters</option>
+                <option value="mussels" style="color: #fff;">Mussels</option>
+                <option value="seaweed" style="color: #fff;">Seaweed</option>
+                <option value="finfish" style="color: #fff;">Fin Fish</option>
+                <option value="other" style="color: #fff;">Other</option>
+              </select>
+              <label for="operation" style="opacity: 0;">Type of Operation</label>
+            </div>
+            <div class="form-group">
+              <textarea id="message" rows="3" placeholder=" "></textarea>
+              <label for="message">Message</label>
+            </div>
+            <button type="submit" class="btn-submit">
+              <span>Get in Touch</span>
+            </button>
+          </form>
+
+          <!-- Success state -->
+          <div id="form-success" class="form-success">
+            <svg viewBox="0 0 40 40" class="w-12 h-12 mx-auto mb-4">
+              <path d="M20 4L36 36H4L20 4Z" fill="#7A8999" opacity="0.6"/>
+            </svg>
+            <h3 class="font-display font-bold text-white text-2xl mb-2">Message Sent</h3>
+            <p class="text-base" style="color: rgba(255,255,255,0.6);">Thank you for your interest. We'll be in touch within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer class="grain relative py-16" style="background: #0a1525;">
+    <div class="max-w-[1340px] mx-auto px-6">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-12">
+        <!-- Logo -->
+        <a href="#hero" class="flex items-center">
+          <img src="https://static1.mysiteserver.net/Images/aicontroltechnologies/site/template/AutoDive_r__Logo.png" alt="AutoDive®" class="h-7 w-auto" style="opacity: 0.5;">
+        </a>
+
+        <!-- Nav -->
+        <nav class="flex flex-wrap gap-6">
+          <a href="#about" class="text-xs uppercase tracking-[0.1em] transition-colors" style="color: var(--color-silver-gray);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--color-silver-gray)'">Technology</a>
+          <a href="#markets" class="text-xs uppercase tracking-[0.1em] transition-colors" style="color: var(--color-silver-gray);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--color-silver-gray)'">Markets</a>
+          <a href="#team" class="text-xs uppercase tracking-[0.1em] transition-colors" style="color: var(--color-silver-gray);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--color-silver-gray)'">About</a>
+          <a href="#news" class="text-xs uppercase tracking-[0.1em] transition-colors" style="color: var(--color-silver-gray);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--color-silver-gray)'">News</a>
+          <a href="#contact" class="text-xs uppercase tracking-[0.1em] transition-colors" style="color: var(--color-silver-gray);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--color-silver-gray)'">Contact</a>
+        </nav>
+      </div>
+
+      <div class="h-px mb-8" style="background: rgba(255,255,255,0.06);"></div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <p class="text-xs" style="color: rgba(255,255,255,0.25);">&copy; 2026 AutoDive®. All Rights Reserved.</p>
+        <p class="text-xs" style="color: rgba(255,255,255,0.15);">AI Control Technologies, Inc.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    // ==========================================
+    // INIT
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initNav();
+      initHeroAnimation();
+      initScrollAnimations();
+      initStatsCounter();
+    });
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+    function initNav() {
+      const nav = document.getElementById('main-nav');
+      let lastScroll = 0;
+
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY;
+        if (currentScroll > 80) {
+          nav.classList.add('nav-scrolled');
+        } else {
+          nav.classList.remove('nav-scrolled');
+        }
+        lastScroll = currentScroll;
+      });
+
+      // Active section tracking
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link[data-section]');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop - 200;
+          if (window.scrollY >= sectionTop) {
+            current = section.getAttribute('id');
+          }
+        });
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('data-section') === current) {
+            link.classList.add('active');
+          }
+        });
+      });
+
+      // Smooth scroll for nav links
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.querySelector(link.getAttribute('href'));
+          if (target) {
+            gsap.to(window, {
+              duration: 1,
+              scrollTo: { y: target, offsetY: 80 },
+              ease: 'power3.inOut'
+            });
+          }
+        });
+      });
+    }
+
+    // Mobile menu
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+    }
+
+    // ==========================================
+    // HERO ANIMATION
+    // ==========================================
+    function initHeroAnimation() {
+      const tl = gsap.timeline({ delay: 0.3 });
+
+      tl.to('.hero-label', {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out'
+      })
+      .from('.hero-label', { y: 20 }, '<')
+      .to('.hero-word', {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: 'power3.out'
+      }, '-=0.3')
+      .from('.hero-word', { y: 50 }, '<')
+      .to('.hero-sub', {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out'
+      }, '-=0.2')
+      .from('.hero-sub', { y: 20 }, '<')
+      .to('.hero-ctas', {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power3.out'
+      }, '-=0.2')
+      .from('.hero-ctas', { y: 15 }, '<')
+      .to('.hero-scroll', {
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.1');
+    }
+
+    // ==========================================
+    // SCROLL ANIMATIONS (GSAP ScrollTrigger)
+    // ==========================================
+    function initScrollAnimations() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // About section reveals
+      gsap.utils.toArray('.about-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            end: 'top 60%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.7,
+          delay: i * 0.08,
+          ease: 'power3.out'
+        });
+      });
+
+      // Value props stagger
+      gsap.utils.toArray('.value-prop').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          x: -20,
+          duration: 0.6,
+          delay: i * 0.1,
+          ease: 'power3.out'
+        });
+      });
+
+      // Technology / How It Works reveals
+      gsap.utils.toArray('.tech-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 35,
+          duration: 0.7,
+          delay: i * 0.06,
+          ease: 'power3.out'
+        });
+      });
+
+      // Market reveals
+      gsap.utils.toArray('.market-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 25,
+          duration: 0.65,
+          delay: i * 0.08,
+          ease: 'power3.out'
+        });
+      });
+
+      // Stats reveals
+      gsap.utils.toArray('.stat-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.7,
+          delay: i * 0.06,
+          ease: 'power3.out'
+        });
+      });
+
+      // Team reveals with stagger offset
+      gsap.utils.toArray('.team-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 40,
+          duration: 0.7,
+          delay: i * 0.09,
+          ease: 'power3.out'
+        });
+      });
+
+      // News reveals
+      gsap.utils.toArray('.news-reveal').forEach((el, i) => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 25,
+          duration: 0.65,
+          delay: i * 0.1,
+          ease: 'power3.out'
+        });
+      });
+    }
+
+    // ==========================================
+    // STEP SLIDER (How It Works)
+    // ==========================================
+    function switchStep(index) {
+      // Update tabs
+      document.querySelectorAll('.step-tab').forEach(tab => {
+        tab.classList.toggle('active', parseInt(tab.dataset.step) === index);
+      });
+      // Update panels
+      document.querySelectorAll('.step-panel').forEach(panel => {
+        panel.classList.toggle('active', parseInt(panel.dataset.step) === index);
+      });
+    }
+
+    // ==========================================
+    // MARKET CARD EXPAND
+    // ==========================================
+    function toggleMarketCard(card) {
+      const isExpanded = card.classList.contains('expanded');
+      // Collapse all other cards
+      document.querySelectorAll('.market-card').forEach(c => c.classList.remove('expanded'));
+      // Toggle this card
+      if (!isExpanded) {
+        card.classList.add('expanded');
+      }
+    }
+
+    // ==========================================
+    // STATS COUNTER
+    // ==========================================
+    function initStatsCounter() {
+      const statNumbers = document.querySelectorAll('.stat-number[data-target]');
+
+      statNumbers.forEach(stat => {
+        const target = parseFloat(stat.dataset.target);
+        const prefix = stat.dataset.prefix || '';
+        const suffix = stat.dataset.suffix || '';
+
+        ScrollTrigger.create({
+          trigger: stat,
+          start: 'top 85%',
+          once: true,
+          onEnter: () => {
+            gsap.to({ val: 0 }, {
+              val: target,
+              duration: 1.6,
+              ease: 'power2.out',
+              onUpdate: function () {
+                const current = this.targets()[0].val;
+                if (target >= 100) {
+                  stat.textContent = prefix + Math.round(current).toLocaleString() + suffix;
+                } else if (target >= 10) {
+                  stat.textContent = prefix + Math.round(current) + suffix;
+                } else {
+                  stat.textContent = prefix + Math.round(current) + suffix;
+                }
+              }
+            });
+          }
+        });
+      });
+    }
+
+    // (Market tabs replaced by card grid with toggleMarketCard above)
+
+    // ==========================================
+    // VIDEO PLAYER
+    // ==========================================
+    function toggleVideo() {
+      const video = document.getElementById('demo-video');
+      const playBtn = document.getElementById('video-play-btn');
+      if (video.paused) {
+        video.play();
+        playBtn.style.opacity = '0';
+        playBtn.style.pointerEvents = 'none';
+        video.addEventListener('ended', () => {
+          playBtn.style.opacity = '1';
+          playBtn.style.pointerEvents = 'auto';
+        }, { once: true });
+        // Click video to pause
+        video.addEventListener('click', () => {
+          video.pause();
+          playBtn.style.opacity = '1';
+          playBtn.style.pointerEvents = 'auto';
+        }, { once: true });
+      }
+    }
+
+    // ==========================================
+    // CONTACT FORM
+    // ==========================================
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('contact-form');
+      const success = document.getElementById('form-success');
+
+      // Basic front-end validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!name || !email) return;
+
+      // Simulate submission
+      form.style.display = 'none';
+      success.classList.add('show');
+    }
+  </script>
+</body>
+</html>
