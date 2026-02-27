@@ -645,26 +645,6 @@
     }
 
     /* ========================================
-       PARTNER LOGOS
-    ======================================== */
-    .partner-logo {
-      color: rgba(255,255,255,0.35);
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 1rem 1.5rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: all 0.3s ease;
-      white-space: nowrap;
-    }
-    .partner-logo:hover {
-      color: rgba(255,255,255,0.6);
-      border-color: rgba(255,255,255,0.15);
-    }
-
-    /* ========================================
        SECTION DIVIDER
     ======================================== */
     .section-divider {
@@ -940,18 +920,8 @@
           </div>
         </div>
 
-        <!-- Technical Illustration -->
-        <div class="relative rounded-sm overflow-hidden mb-12 about-reveal" style="border: 1px solid rgba(27,42,74,0.08);">
-          <img src="https://static5.mysiteserver.net/w/1666/h/1178/p/Images/aicontroltechnologies/site/images/AutoDive_Design_Illustrations_20251012_CW_page-0001_comp.jpgx"
-               alt="AutoDive Depth Control Engine technical illustration"
-               class="w-full h-auto">
-          <div class="absolute bottom-4 left-6 z-10">
-            <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-slate-blue);">AutoDive<sup>®</sup> Depth Control Engine — System Architecture</span>
-          </div>
-        </div>
-
         <!-- Value Props — full-width grid -->
-        <div>
+        <div class="mb-12">
           <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-x-12 gap-y-6">
               <div class="value-prop flex gap-4 items-start about-reveal">
                 <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 mt-0.5" style="border-left: 2px solid var(--color-steel-blue);">
@@ -1027,6 +997,16 @@
               </div>
             </div>
           </div>
+
+        <!-- Technical Illustration -->
+        <div class="relative rounded-sm overflow-hidden mb-12 about-reveal" style="border: 1px solid rgba(27,42,74,0.08);">
+          <img src="https://static5.mysiteserver.net/w/1666/h/1178/p/Images/aicontroltechnologies/site/images/AutoDive_Design_Illustrations_20251012_CW_page-0001_comp.jpgx"
+               alt="AutoDive Depth Control Engine technical illustration"
+               class="w-full h-auto">
+          <div class="absolute bottom-4 left-6 z-10">
+            <span class="font-mono text-xs tracking-wide uppercase" style="color: var(--color-slate-blue);">AutoDive<sup>®</sup> Depth Control Engine — System Architecture</span>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -1494,60 +1474,6 @@
   </section>
 
 
-  <!-- =============================================
-       BY THE NUMBERS / SOCIAL PROOF
-  ============================================= -->
-  <section id="stats" class="grain relative py-24 lg:py-32" style="background: linear-gradient(170deg, #0F1D35 0%, #1B2A4A 60%, #1e3050 100%);">
-    <!-- Water texture background -->
-    <div class="absolute inset-0 z-0" style="background: url('https://www.autodive.com/Images/aicontroltechnologies/site/images/universal/bg-blue-texture.jpg') center/cover no-repeat; opacity: 0.06; mix-blend-mode: luminosity;"></div>
-    <!-- Subtle glow -->
-    <div class="absolute top-1/3 left-1/4 w-full max-w-[600px] h-[400px] rounded-full pointer-events-none"
-         style="background: radial-gradient(circle, rgba(90,110,130,0.06) 0%, transparent 70%);"></div>
-
-    <div class="max-w-[1340px] mx-auto px-6 relative">
-      <div class="section-label mb-6 stat-reveal" style="color: var(--color-silver-gray);">05 / BY THE NUMBERS</div>
-      <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight mb-16 stat-reveal">
-        Backed by Science.<br><span class="accent" style="color: var(--color-steel-blue);">Proven in the Field.</span>
-      </h2>
-
-      <!-- Stats Grid - asymmetric -->
-      <div class="grid grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-4 mb-20">
-        <div class="stat-reveal lg:pr-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
-          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="24" data-prefix="$" data-suffix="T+">$0</div>
-          <p class="text-sm" style="color: var(--color-silver-gray);">Global ocean economy</p>
-        </div>
-        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
-          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="970" data-prefix="$" data-suffix="K+">$0</div>
-          <p class="text-sm" style="color: var(--color-silver-gray);">Funding raised to date</p>
-        </div>
-        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
-          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="3" data-prefix="" data-suffix="">0</div>
-          <p class="text-sm" style="color: var(--color-silver-gray);">Government partnerships</p>
-        </div>
-        <div class="stat-reveal lg:px-4" style="border-right: 1px solid rgba(255,255,255,0.08);">
-          <div class="stat-number text-4xl lg:text-5xl text-white mb-2" data-target="4" data-prefix="" data-suffix="">0</div>
-          <p class="text-sm" style="color: var(--color-silver-gray);">Aquaculture markets</p>
-        </div>
-        <div class="stat-reveal lg:pl-4">
-          <div class="stat-number text-4xl lg:text-5xl text-white mb-2">1st</div>
-          <p class="text-sm" style="color: var(--color-silver-gray);">Autonomous depth control in aquaculture</p>
-        </div>
-      </div>
-
-      <!-- Partner Logos -->
-      <div class="stat-reveal">
-        <p class="text-xs uppercase tracking-[0.15em] mb-6" style="color: var(--color-silver-gray);">Backed & Supported By</p>
-        <div class="flex flex-wrap gap-3">
-          <div class="partner-logo">U.S. Dept. of Energy</div>
-          <div class="partner-logo">USDA</div>
-          <div class="partner-logo">Hatch Blue</div>
-          <div class="partner-logo">Keiretsu Forum</div>
-          <div class="partner-logo">SeaAhead</div>
-          <div class="partner-logo">Innovate Mississippi</div>
-        </div>
-      </div>
-    </div>
-  </section>
 
 
   <!-- =============================================
@@ -1558,7 +1484,7 @@
       <!-- Header -->
       <div class="grid lg:grid-cols-12 gap-8 mb-16">
         <div class="lg:col-span-6">
-          <div class="section-label section-label-dark mb-4 team-reveal">06 / LEADERSHIP</div>
+          <div class="section-label section-label-dark mb-4 team-reveal">05 / LEADERSHIP</div>
           <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight team-reveal">
             Built by Inventors<br><span class="text-two-tone"><span class="accent">&amp; Operators</span></span>
           </h2>
@@ -1632,7 +1558,7 @@
       <div class="grid lg:grid-cols-12 gap-12">
         <!-- Left: header -->
         <div class="lg:col-span-4">
-          <div class="section-label section-label-dark mb-4 news-reveal">07 / NEWS</div>
+          <div class="section-label section-label-dark mb-4 news-reveal">06 / NEWS</div>
           <h2 class="font-display font-extrabold text-text-dark section-headline text-[2.25rem] lg:text-[2.75rem] leading-[1.05] tracking-tight news-reveal">
             Latest<br>Updates
           </h2>
@@ -1701,7 +1627,7 @@
       <div class="grid lg:grid-cols-12 gap-12 lg:gap-20">
         <!-- Left: copy -->
         <div class="lg:col-span-5">
-          <div class="section-label mb-6" style="color: var(--color-silver-gray);">08 / CONTACT</div>
+          <div class="section-label mb-6" style="color: var(--color-silver-gray);">07 / CONTACT</div>
           <h2 class="font-display font-extrabold text-white section-headline text-[2.5rem] lg:text-[3.5rem] leading-[1.05] tracking-tight mb-6">
             Ready to Automate<br><span class="accent" style="color: var(--color-steel-blue);">Your Farm?</span>
           </h2>
